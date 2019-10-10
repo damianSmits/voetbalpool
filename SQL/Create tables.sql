@@ -1,4 +1,4 @@
-DROP TABLE teams;
+DROP TABLE users;
 
 
 CREATE TABLE teams (
@@ -31,7 +31,7 @@ CREATE TABLE predictions (
 
 CREATE TABLE users (
 	userID int AUTO_INCREMENT,
-    userName varchar(50) NOT NULL,
+    userName varchar(50) UNIQUE NOT NULL,
     userPassword varchar (50) NOT NULL,
     score int NOT NULL,
     PRIMARY KEY(userID)

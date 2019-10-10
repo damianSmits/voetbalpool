@@ -1,7 +1,7 @@
 {
-  "name": "ticketshop",
+  "name": "foebelpool",
   "version": "1.0.0",
-  "description": "Het project voor de Ticketshop opdracht",
+  "description": "Het project voor eigen opdracht",
   "main": "main.js",
   "scripts": {
     "test": "ava"
