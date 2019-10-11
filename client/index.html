@@ -10,33 +10,36 @@
 
     </head>
 
-    <header id="mainheader" class="header">
-        
+    <header id="mainheader" class="header">  
     </header>
-
-
     <body>
         
         <div id = "app">
-            <!-- <links 
-            v-on:admin-confirmed="goToAdmin">
-            </links> -->
+            <links 
+            v-on:admin-confirmed="goToAdmin"
+            v-on:show-played-matches="showPlayedMatchespls"
+            v-on:get-played-matches="getPlayedMatches">
+            </links>
+
             <admin-screen
+            v-if=haveAdminRights
             v-on:team-confirmed="addTeam"
             v-on:match-confirmed="addMatch"
-            v-on:show-matches="getMatches"
-            ></br></br>
-            
-            
-        </admin-screen>
-                
-            
-            
-
+            v-on:show-matches="getMatchesToGiveResult"
+            >
+            </admin-screen>      
+        
+        <matches-screen
+            v-if=showPlayed
+            v-bind:played-matches=playedMatches
+            >
+        </matches-screen>
+       
         </div>
         
         <script>
         Vue.component('admin-screen', {
+            props: [ 'matches' ],
             data() {
                 return {
                     teamName: undefined,
@@ -49,14 +52,15 @@
                     errorMessage: "",
                 }
             },
+            
             template: `
                 <div>
-                    
+                    </br> {{ errorMessage }}</br>
                     Voeg Team toe
                     </br><input placeholder = 'naam' v-model="teamName"/>
                    
                     </br><button v-on:click="confirmTeam">Stort</button>
-                    </br>{{ errorMessage }}
+                    </br>
                     </br></br>
 
                     Kan ook wel wedstrijd toevoegen als je wilt
@@ -64,35 +68,19 @@
                     </br><input placeholder = 'Uitteam' v-model="awayTeam"/>
                     </br><input placeholder = 'Speelronde' v-model="round" min = 0 step =1/>Speelronde
                     </br><button v-on:click="confirmMatch">Stort</button>
-                    {{ errorMessage }}
+                    
                     </br></br>
 
                     Of missschien uitslagen invullen van speelronde:
                     </br><input placeholder = 'round' v-model="roundThatHasBeen" min = 0 step =1/>
                     </br><button v-on:click="showMatches">Laat zien dan</button>
-                    {{ errorMessage }}
-
-                    <div id="list"></div>
-                    <template>
-                        <article>
-                        <span class = "hometeam">thuis</span>
-                        <input v-model="homeGoals" min = 0 step =1 size = 4/>
-                        -
-                        <input v-model="awayGoals" min = 0 step =1 size = 4/>
-                        <span class = "awayteam">uit</span>
-                        <button class="matchResult" v-on:click="matchResultClicked">stort</button> 
-                        </article>
                     
-                        
-                    </template>
-
                     </div>
-                    
             `,
             methods: {
                 confirmTeam() {
                     if (!this.teamName) {
-                        this.errorMessage = "wel teamNaam toevoegen";
+                        this.errorMessage = "wel team naam toevoegen";
                         return;
                     }
 
@@ -101,7 +89,7 @@
                 },
                 confirmMatch() {
                     if (!this.homeTeam || !this.awayTeam) {
-                        this.errorMessage = "wel teamNaam toevoegen";
+                        this.errorMessage = "wel team naam toevoegen";
                         return;
                     }
 
@@ -115,7 +103,6 @@
                     }
                     this.errorMessage = "";
                     this.$emit('show-matches', this.roundThatHasBeen);
-
                 }
             }
         });
@@ -127,32 +114,74 @@
             },
             template: `
                 <div>
-                    <button v-on:click="adminRights">admin</button>   
+                    <button v-on:click="adminRights">admin</button>
+                    <button v-on:click="getPlayedMatches">haal afgelopen potjes op</button>  
+                    <button v-on:click="showPlayedMatches">laat afgelopen potjes zien</button>    
                 </div>
                     
             `,
             methods: {   
                 adminRights(){
                     this.$emit('admin-confirmed'); 
+                },
+                getPlayedMatches(){
+                    this.$emit('get-played-matches'); 
+                },
+                showPlayedMatches(){
+                    this.$emit('show-played-matches'); 
                 }
+            },
+                
+         });
+
+         Vue.component('matches-screen', {
+            props: [ 'playedMatches' ],
+            data() {
+                return {  
+                       
+                }
+            },
+            
+            template: `
+                <div>
+                        <li v-for="match in playedMatches">
+                            {{ match["homeTeam"] }} vs. {{ match["awayTeam"] }}&nbsp;&nbsp;
+                            {{ match["homeGoals"] }}-{{ match["awayGoals"] }}
+                        </li>
+                    
+
+                </div>
+                    
+            `,
+            methods: {   
             }
          });
-        
+         
+
 
     const app = new Vue({
         el: '#app',
 
         data: {
             haveAdminRights: false,
-            matches:[] 
+            showPlayed: false,
+            matches: undefined,
+            playedMatches: undefined 
         },
 
         computed: {
-            goToAdmin(){
-            return !this.haveAdminRights;  
-            }
+            
         },
         methods: {
+            async goToAdmin(){
+                this.haveAdminRights= !this.haveAdminRights
+                return this.haveAdminRights 
+            },
+            async showPlayedMatchespls(){
+                console.log(playedMatches.length)
+                this.showPlayed= !this.showPlayed;
+                return this.showPlayed; 
+            },
             async addTeam(teamName){
                 console.log(teamName);
                 let newTeam = {"teamName": teamName}
@@ -181,7 +210,7 @@
                     body: JSON.stringify(newMatch)  
                 })
             },
-            async getMatches(roundThatHasBeen){
+            async getMatchesToGiveResult(roundThatHasBeen){
                 console.log(roundThatHasBeen);
                 let newRoundThatHasBeen= {"round": roundThatHasBeen}
                 let response = await fetch('api/showMatch/', {
@@ -192,32 +221,30 @@
                     },
                     body: JSON.stringify(newRoundThatHasBeen) 
                 })
-                matches = await response.json();
+                let matches = await response.json();
+                this.matches=matches;
                 console.log(matches);
-                console.log(matches.length)
-                for (let i = 0; i < matches.length; i++) {
-                    let temp = document.getElementsByTagName("template")[0];
-                    let clone = temp.content.cloneNode(true);
-                    let article = clone.querySelector("article");
-                    article.children[0].innerHTML=matches[i].homeTeam;
-                    article.children[3].innerHTML=matches[i].awayTeam;
-                    document.getElementById("list").appendChild(article);
-                };
+                
+                
             },
-            async matchResultClicked(){
-                console.log("D:")
-            }
+            async getPlayedMatches(){
+                let response = await fetch('/api/getPlayed/', {
+                    method: 'GET',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                    },
+                })
+                playedMatches = await response.json();
+                this.playedMatches=playedMatches;
+                console.log(playedMatches);
+            },
         },
     })
 
                 
     </script>
-        
-      
-           
-        
-        
-
+     
     <script src="src/foebelIndex.js"></script>
 
     </body>

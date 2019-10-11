@@ -9,9 +9,6 @@ app.use(express.json());
 
 app.listen(8000, () => console.log('Example app listening on port 8000!'));
 
-
-
-
 app.post("/api/addTeam", function (request, response) {
     console.log("Api call received for /addTeam");
 
@@ -63,6 +60,7 @@ app.post("/api/addMatch", function (request, response) {
 });
 
 let matches = [];
+let playedMatches = [];
 
 app.post("/api/showMatch/", function (request, response) {
     console.log("Api call received for /showmatch");
@@ -74,7 +72,6 @@ app.post("/api/showMatch/", function (request, response) {
 });
 
 function getRoundMatches(round){ 
-    
     
     var connection = mysql.createConnection({
         host: "localhost",
@@ -104,3 +101,39 @@ function getRoundMatches(round){
     connection.end();
     console.log("Disconnected!");
    }
+
+
+app.get("/api/getPlayed/", function (request, response) {
+    console.log("Api call received for /getPlayed");
+
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    let sql = "SELECT * FROM fixtures WHERE homeGoals IS NOT NULL";
+    
+    connection.query(sql, function (err, result) {
+        if (err) throw err;
+        
+        for (let i = 0; i < result.length; i++) {
+            playedMatches.push(
+                {
+                    homeTeam: result[i]["homeTeam"],
+                    awayTeam: result[i]["awayTeam"],
+                    homeGoals: result[i]["homeGoals"],
+                    awayGoals: result[i]["awayGoals"],
+                })
+            }
+        })
+        response.json(playedMatches);
+    connection.end();
+    playedMatches = [];
+    console.log("Disconnected!");
+});

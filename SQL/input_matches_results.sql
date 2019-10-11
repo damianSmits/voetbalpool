@@ -6,7 +6,7 @@ INSERT INTO teams (teamName, poule) VALUES (
 SELECT * FROM teams;
 
 DELETE FROM teams 
-WHERE teamName = "hfks";
+WHERE teamName = "Henkie";
 
 
 INSERT INTO fixtures (homeTeam, awayTeam, round) VALUES(
@@ -15,14 +15,14 @@ INSERT INTO fixtures (homeTeam, awayTeam, round) VALUES(
     1
 );
 
-
-SELECT * FROM fixtures
-WHERE round = 9 AND homeGoals IS NULL;
-
 DELETE FROM fixtures
-WHERE homeTeam = "psv";
+WHERE fixtureID = 24;
+
+SELECT * FROM fixtures; 
+
+SELECT * FROM fixtures WHERE homeGoals IS NOT NULL;
 
 UPDATE fixtures 
-	SET homeGoals = 9, awayGoals = 0
-    WHERE fixtureID = 1;
+	SET homeGoals = 2, awayGoals = 0
+    WHERE fixtureID = 33;
     
