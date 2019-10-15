@@ -18,7 +18,9 @@
             <links 
             v-on:admin-confirmed="goToAdmin"
             v-on:show-played-matches="showPlayedMatchespls"
-            v-on:get-played-matches="getPlayedMatches">
+            v-on:get-played-matches="getPlayedMatches"
+            v-on:show-register-user="goToRegister"
+            v-on:show-user-login="goToLogin">
             </links>
 
             <admin-screen
@@ -29,21 +31,36 @@
             >
             </admin-screen>      
         
-        <matches-screen
-            v-if=showPlayed
-            v-bind:played-matches=playedMatches
-            >
-        </matches-screen>
-       
-        </div>
+            <matches-screen
+                v-if=showPlayed
+                v-bind:played-matches=playedMatches
+                >
+            </matches-screen>
+
+            <fill-in-results-screen
+                v-if=showMatchesForResult
+                v-bind:matches=matches
+                v-on:give-results-to-matches="sendResults">
+            </fill-in-results-screen>
         
+            <register-screen
+                v-if=showRegisterForm
+                v-on:register-user="registerUser">
+            </register-screen>
+
+            <login-screen
+                v-if=showUserLogin
+                v-on:user-login="userLogin">
+            </login-screen>
+            
+        </div>
         <script>
         Vue.component('admin-screen', {
             props: [ 'matches' ],
             data() {
                 return {
                     teamName: undefined,
-                    homeTeam: "",
+                    homeTeam:"",
                     awayTeam:"",
                     awayGoals:"",
                     homeGoals:"",
@@ -116,7 +133,9 @@
                 <div>
                     <button v-on:click="adminRights">admin</button>
                     <button v-on:click="getPlayedMatches">haal afgelopen potjes op</button>  
-                    <button v-on:click="showPlayedMatches">laat afgelopen potjes zien</button>    
+                    <button v-on:click="showPlayedMatches">laat afgelopen potjes zien</button>
+                    <button v-on:click="showRegisterUser">Registreer</button>
+                    <button v-on:click="showUserLogin">inloggen</button>    
                 </div>
                     
             `,
@@ -129,6 +148,12 @@
                 },
                 showPlayedMatches(){
                     this.$emit('show-played-matches'); 
+                },
+                showRegisterUser(){
+                    this.$emit('show-register-user'); 
+                },
+                showUserLogin(){
+                    this.$emit('show-user-login'); 
                 }
             },
                 
@@ -158,6 +183,89 @@
          });
          
 
+         Vue.component('fill-in-results-screen', {
+            props: [ 'matches' ],
+            data() {
+                return {  
+                       homeTeam: "",
+                       awayTeam: "",
+                       homeGoals: 0,
+                       awayGoals: 0
+                }
+            },
+            
+            template: `
+                <div>
+                        <li v-for="match in matches">
+                            <label>{{ match["homeTeam"] }}</label> 
+                            <input v-model="homeGoals" min = 0 step =1 size="1">-
+                            <input v-model="awayGoals" min = 0 step =1 size="1"> 
+                            <label>{{ match["awayTeam"] }}</label>&nbsp;&nbsp;
+                            <button v-on:click="sendMatchResults">Stort</button> 
+                        </li>
+                    
+
+                </div>
+                    
+            `,
+            methods: { 
+                sendMatchResults(){
+                    console.log(event.target.parentNode.children[3].innerHTML)
+                    this.$emit("give-results-to-matches", event.target.parentNode.children[0].innerHTML, event.target.parentNode.children[3].innerHTML, this.homeGoals, this.awayGoals)
+                }  
+            }
+         });
+
+
+         Vue.component('register-screen', {
+            data() {
+                return {  
+                       userName: "",
+                       password: "",
+                       email:""
+                }
+            },
+            
+            template: `
+                <div>
+                    <input v-model="userName" placeholder ="user name" ></br>
+                    <input v-model="password" placeholder ="password" ></br>
+                    <input v-model="email" placeholder ="email" >
+                    <button v-on:click="registerpls">Registreer</button>
+                </div>
+                    
+            `,
+            methods: { 
+                registerpls(){
+                    console.log()
+                    this.$emit("register-user", this.userName, this.password, this.email)
+                }  
+            }
+         });
+
+         Vue.component('login-screen', {
+            data() {
+                return {  
+                       userName: "",
+                       password: "",
+                }
+            },
+            
+            template: `
+                <div>
+                    <input v-model="userName" placeholder ="user name" ></br>
+                    <input v-model="password" placeholder ="password" ></br>
+                    <button v-on:click="logIn">Log in</button>
+                </div>
+                    
+            `,
+            methods: { 
+                logIn(){
+                    console.log()
+                    this.$emit("user-login", this.userName, this.password)
+                }  
+            }
+         });
 
     const app = new Vue({
         el: '#app',
@@ -166,7 +274,10 @@
             haveAdminRights: false,
             showPlayed: false,
             matches: undefined,
-            playedMatches: undefined 
+            playedMatches: undefined,
+            showMatchesForResult: undefined,
+            showRegisterForm: undefined,
+            showUserLogin: undefined,
         },
 
         computed: {
@@ -176,6 +287,14 @@
             async goToAdmin(){
                 this.haveAdminRights= !this.haveAdminRights
                 return this.haveAdminRights 
+            },
+            async goToRegister(){
+                this.showRegisterForm= !this.showRegisterForm
+                return this.showRegisterForm 
+            },
+            async goToLogin(){
+                this.showUserLogin= !this.showUserLogin
+                return this.showUserLogin 
             },
             async showPlayedMatchespls(){
                 console.log(playedMatches.length)
@@ -211,7 +330,6 @@
                 })
             },
             async getMatchesToGiveResult(roundThatHasBeen){
-                console.log(roundThatHasBeen);
                 let newRoundThatHasBeen= {"round": roundThatHasBeen}
                 let response = await fetch('api/showMatch/', {
                     method: 'POST',
@@ -224,9 +342,10 @@
                 let matches = await response.json();
                 this.matches=matches;
                 console.log(matches);
-                
-                
+                this.showMatchesForResult= !this.showMatchesForResult;
+                return this.showMatchesForResult; 
             },
+
             async getPlayedMatches(){
                 let response = await fetch('/api/getPlayed/', {
                     method: 'GET',
@@ -239,14 +358,62 @@
                 this.playedMatches=playedMatches;
                 console.log(playedMatches);
             },
-        },
+            async sendResults(homeTeam, awayTeam, homeGoals, awayGoals){
+                let newMatchToGiveResult = {
+                    "homeTeam": homeTeam,
+                    "awayTeam": awayTeam,
+                    "homeGoals": homeGoals,
+                    "awayGoals": awayGoals
+                 }
+                let response = await fetch('/api/sendResults/', {
+                    method: 'POST',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newMatchToGiveResult)
+                })
+                playedMatches = await response.json();
+                this.playedMatches=playedMatches;
+                console.log(playedMatches);
+            },
+            async registerUser(userName, password, email){
+                console.log(userName + "" + password + "" + email);
+                let newUser = {
+                    "userName": userName,
+                    "password": password,
+                    "email": email
+            }
+                await fetch('api/registerUser', {
+                    method: 'POST',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newUser)  
+                })
+            },
+            async userLogin(userName, password){
+                let newLogin= {
+                    "userName": userName,
+                    "password": password
+                }
+                let response = await fetch('api/userLogin', {
+                    method: 'POST',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newLogin) 
+                })
+                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            },
+        },  
+        
     })
 
                 
     </script>
-     
-    <script src="src/foebelIndex.js"></script>
-
     </body>
 </html>
 

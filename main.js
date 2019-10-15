@@ -137,3 +137,80 @@ app.get("/api/getPlayed/", function (request, response) {
     playedMatches = [];
     console.log("Disconnected!");
 });
+
+app.post("/api/sendResults", function (request, response) {
+    console.log("Api call received for /sendResult");
+
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    console.log(request.body);
+    let sql = "UPDATE fixtures SET homeGoals = '" + request.body["homeGoals"] + "', awayGoals = '" + request.body["awayGoals"] + "' WHERE homeTeam = '" + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "';";
+    
+    connection.query(sql, function (err, result) {
+        if (err) throw err;
+        })
+
+    connection.end();
+    console.log("Disconnected!");
+});
+
+app.post("/api/registerUser", function (request, response) {
+    console.log("Api call received for /registerUser");
+
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    console.log(request.body);
+    let sql = "INSERT INTO users SET userName = '" + request.body["userName"] + "', userPassword = '" + request.body["password"] + "', email = '" + request.body["email"] + "', score = 0;";
+    
+    connection.query(sql, function (err, result) {
+        if (err) throw err;
+        })
+
+    connection.end();
+    console.log("Disconnected!");
+});
+
+app.post("/api/userLogin", function (request, response) {
+    console.log("Api call received for /userLogin");
+
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    console.log(request.body);
+    let sql = "SELECT * FROM users WHERE userName = '" + request.body["userName"] + "' AND userPassword = '" + request.body["password"] + "';";
+    
+    connection.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log(result);   
+    })
+    
+    connection.end();
+    console.log("Disconnected!");
+});
+

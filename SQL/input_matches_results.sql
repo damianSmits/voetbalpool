@@ -25,4 +25,6 @@ SELECT * FROM fixtures WHERE homeGoals IS NOT NULL;
 UPDATE fixtures 
 	SET homeGoals = 2, awayGoals = 0
     WHERE fixtureID = 33;
+
+
     
