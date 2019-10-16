@@ -17,10 +17,11 @@
         <div id = "app">
             <links 
             v-on:admin-confirmed="goToAdmin"
-            v-on:show-played-matches="showPlayedMatchespls"
             v-on:get-played-matches="getPlayedMatches"
+            v-on:show-played-matches="showPlayedMatchespls"
             v-on:show-register-user="goToRegister"
-            v-on:show-user-login="goToLogin">
+            v-on:show-user-login="goToLogin"
+            v-on:show-matches-to-predict="goToPredictMatches">
             </links>
 
             <admin-screen
@@ -53,6 +54,13 @@
                 v-on:user-login="userLogin">
             </login-screen>
             
+            <predict-screen
+                v-if=predictMatches
+                v-on:predict-matches="showMatchesToPredict"
+                v-bind:matches-to-predict="matchesToPredict"
+                v-on:send-prediction="sendMatchPrediction">
+            </predict-screen>
+
         </div>
         <script>
         Vue.component('admin-screen', {
@@ -135,7 +143,9 @@
                     <button v-on:click="getPlayedMatches">haal afgelopen potjes op</button>  
                     <button v-on:click="showPlayedMatches">laat afgelopen potjes zien</button>
                     <button v-on:click="showRegisterUser">Registreer</button>
-                    <button v-on:click="showUserLogin">inloggen</button>    
+                    <button v-on:click="showUserLogin">inloggen</button>
+                    <button v-on:click="showMatchesToPredict">voorspel komende potjes</button>  
+                    <button v-on:click="userLogOff">uitloggen</button> 
                 </div>
                     
             `,
@@ -154,6 +164,15 @@
                 },
                 showUserLogin(){
                     this.$emit('show-user-login'); 
+                },
+                showMatchesToPredict(){
+                    this.$emit('show-matches-to-predict'); 
+                },
+                userLogOff(){
+                    if(localStorage.length != 0){
+                    localStorage.clear();
+                    alert("k doei")
+                    }
                 }
             },
                 
@@ -173,10 +192,7 @@
                             {{ match["homeTeam"] }} vs. {{ match["awayTeam"] }}&nbsp;&nbsp;
                             {{ match["homeGoals"] }}-{{ match["awayGoals"] }}
                         </li>
-                    
-
                 </div>
-                    
             `,
             methods: {   
             }
@@ -203,8 +219,6 @@
                             <label>{{ match["awayTeam"] }}</label>&nbsp;&nbsp;
                             <button v-on:click="sendMatchResults">Stort</button> 
                         </li>
-                    
-
                 </div>
                     
             `,
@@ -229,7 +243,7 @@
             template: `
                 <div>
                     <input v-model="userName" placeholder ="user name" ></br>
-                    <input v-model="password" placeholder ="password" ></br>
+                    <input v-model="password" placeholder ="password" type ="password"></br>
                     <input v-model="email" placeholder ="email" >
                     <button v-on:click="registerpls">Registreer</button>
                 </div>
@@ -243,27 +257,73 @@
             }
          });
 
+
          Vue.component('login-screen', {
             data() {
                 return {  
                        userName: "",
                        password: "",
+                       errorMessage: "",
                 }
             },
             
             template: `
                 <div>
                     <input v-model="userName" placeholder ="user name" ></br>
-                    <input v-model="password" placeholder ="password" ></br>
+                    <input v-model="password" placeholder ="password" type ="password"></br>
                     <button v-on:click="logIn">Log in</button>
+
+                    {{ errorMessage }}
                 </div>
                     
             `,
             methods: { 
                 logIn(){
                     console.log()
-                    this.$emit("user-login", this.userName, this.password)
+                    this.$emit("user-login", this.userName, this.password, this.errorMessage)
                 }  
+            }
+         });
+
+         Vue.component('predict-screen', {
+            props: [ 'matchesToPredict' ],
+            data() {
+                return {  
+                       homeGoals: undefined,
+                       awayGoals: undefined,
+                       homeTeam: undefined,
+                       awayTeam: undefined,
+                       ronde:false,
+                       errorMessage:"",
+                }
+            },
+            
+            template: `
+                <div>
+                    <button v-on:click="startMatchPrediction">haal wedstrijden op</button>
+                    </br></br>{{ errorMessage }}</br></br>
+                    
+                    <li v-for="match in matchesToPredict">
+                            {{ match["round"] }}: <label>{{ match["homeTeam"] }}</label> 
+                            <input v-model="homeGoals" min = 0 step =1 size="1">-
+                            <input v-model="awayGoals" min = 0 step =1 size="1"> 
+                            <label>{{ match["awayTeam"] }}</label>&nbsp;&nbsp;
+                            <button v-on:click="sendPrediction">voorspel!</button>
+                        </li>
+                </div>
+                    
+            `,
+            methods: { 
+                startMatchPrediction(){
+                    this.$emit("predict-matches")
+                },
+                sendPrediction(){
+                    if(localStorage.length == 0){
+                        this.errorMessage = "bennie ingelogd"
+                    } else{
+                        this.$emit("send-prediction", this.homeGoals, this.homeTeam, this.awayTeam, this.awayGoals, localStorage["username"])
+                    }
+                }    
             }
          });
 
@@ -273,33 +333,53 @@
         data: {
             haveAdminRights: false,
             showPlayed: false,
-            matches: undefined,
-            playedMatches: undefined,
-            showMatchesForResult: undefined,
-            showRegisterForm: undefined,
-            showUserLogin: undefined,
+            matches: [],
+            playedMatches: [],
+            showMatchesForResult: false,
+            showRegisterForm: false,
+            showUserLogin: false, 
+            predictMatches: false,
+            matchesToPredict: [],
+            errorMessage: "",
         },
 
         computed: {
             
         },
         methods: {
+            hideAllScreens(){
+                this.haveAdminRights=false;
+                this.showPlayed=false;
+                this.showMatchesForResult=false;
+                this.predictMatches=false;
+                this.showRegisterForm = false;
+                this.showUserLogin= false;
+                this.predictMatches = false;
+            },
             async goToAdmin(){
+                this.hideAllScreens();
                 this.haveAdminRights= !this.haveAdminRights
                 return this.haveAdminRights 
             },
             async goToRegister(){
+                this.hideAllScreens();
                 this.showRegisterForm= !this.showRegisterForm
                 return this.showRegisterForm 
             },
             async goToLogin(){
+                this.hideAllScreens();
                 this.showUserLogin= !this.showUserLogin
                 return this.showUserLogin 
             },
             async showPlayedMatchespls(){
-                console.log(playedMatches.length)
+                this.hideAllScreens();
                 this.showPlayed= !this.showPlayed;
                 return this.showPlayed; 
+            },
+            async goToPredictMatches(){
+                this.hideAllScreens();
+                this.predictMatches= !this.predictMatches;
+                return this.predictMatches; 
             },
             async addTeam(teamName){
                 console.log(teamName);
@@ -374,7 +454,6 @@
                     body: JSON.stringify(newMatchToGiveResult)
                 })
                 playedMatches = await response.json();
-                this.playedMatches=playedMatches;
                 console.log(playedMatches);
             },
             async registerUser(userName, password, email){
@@ -394,6 +473,7 @@
                 })
             },
             async userLogin(userName, password){
+                
                 let newLogin= {
                     "userName": userName,
                     "password": password
@@ -406,13 +486,48 @@
                     },
                     body: JSON.stringify(newLogin) 
                 })
-                console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                let userLoggingIn = await response.json()
+                console.log(userLoggingIn)
+                if(userLoggingIn !== "NEE"){
+                    localStorage.setItem("username", userLoggingIn)
+                }
+                else{
+                    console.log("flauwekul ingevuld")
+                }
+            },
+            async showMatchesToPredict(){
+                let response = await fetch('api/getMatchesToPredict/', {
+                    method: 'GET',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                    },
+                })
+                matchesToPredict = await response.json();
+                this.matchesToPredict = matchesToPredict;
+                console.log(matchesToPredict);
+            },
+            async sendMatchPrediction(homeGoals, homeTeam, awayTeam, awayGoals, userName){
+                let newPrediction = {
+                    "homeGoals": homeGoals,
+                    "awayGoals": awayGoals,
+                    "homeTeam": homeTeam,
+                    "awayTeam": awayTeam,
+                    "userName": localStorage["username"]
+                }
+                await fetch('api/sendMatchPrediction/', {
+                    method: 'POST',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newPrediction)
+                })
             },
         },  
-        
-    })
+    })            
 
-                
+    
     </script>
     </body>
 </html>

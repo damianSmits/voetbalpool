@@ -1,7 +1,13 @@
 INSERT INTO predictions 
-    SET userID = 1,
-    fixtureID = 1,
+    SET userID = 2,
+    fixtureID = 14,
     predictedHomeGoals = 9,
     predictedAwayGoals = 0;
-    
-    SELECT * FROM predictions;
+
+SELECT * FROM predictions;
+
+
+
+SELECT * FROM fixtures;    
+SELECT * FROM users;
+SELECT * FROM predictions;

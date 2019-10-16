@@ -61,17 +61,10 @@ app.post("/api/addMatch", function (request, response) {
 
 let matches = [];
 let playedMatches = [];
+let matchesToPredict = [];
 
 app.post("/api/showMatch/", function (request, response) {
     console.log("Api call received for /showmatch");
-    getRoundMatches(request.body["round"]);
-    response.json(matches);
-    
-    matches = [];
-    
-});
-
-function getRoundMatches(round){ 
     
     var connection = mysql.createConnection({
         host: "localhost",
@@ -84,7 +77,7 @@ function getRoundMatches(round){
         if (err) throw err;
         console.log("Connected!");
     });
-    let sql = "SELECT * FROM fixtures WHERE round = '" + round + "' AND homeGoals IS NULL;";
+    let sql = "SELECT * FROM fixtures WHERE round = '" + request.body["round"] + "' AND homeGoals IS NULL;";
     
     connection.query(sql, function (err, result) {
         if (err) throw err;
@@ -100,7 +93,11 @@ function getRoundMatches(round){
         }) 
     connection.end();
     console.log("Disconnected!");
-   }
+    response.json(matches);
+    matches = [];
+    
+});
+   
 
 
 app.get("/api/getPlayed/", function (request, response) {
@@ -188,8 +185,44 @@ app.post("/api/registerUser", function (request, response) {
     console.log("Disconnected!");
 });
 
-app.post("/api/userLogin", function (request, response) {
+app.post("/api/userLogin", async function (request, response) {
+    
     console.log("Api call received for /userLogin");
+    
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    
+    let sql = "SELECT * FROM users WHERE userName = '" + request.body["userName"] + "' AND userPassword = '" + request.body["password"] + "';";
+    await connection.query(sql, function (err, result) {
+        if (err) throw err;
+        if (result.length != 0){
+            let userLoggingIn = result[0]["userName"];
+            console.log(userLoggingIn);
+            console.log(result);
+            response.json(userLoggingIn);
+        }
+        else {
+            let userLoggingIn = "NEE"
+            response.json(userLoggingIn)
+        }
+    }) 
+    connection.end();
+    console.log("Disconnected!");
+
+});
+
+ 
+app.get("/api/getMatchesToPredict/", function (request, response) {
+    console.log("Api call received for /getMatchesToPredict");
 
     var connection = mysql.createConnection({
         host: "localhost",
@@ -202,15 +235,22 @@ app.post("/api/userLogin", function (request, response) {
         if (err) throw err;
         console.log("Connected!");
     });
-    console.log(request.body);
-    let sql = "SELECT * FROM users WHERE userName = '" + request.body["userName"] + "' AND userPassword = '" + request.body["password"] + "';";
+    let sql = "SELECT * FROM fixtures WHERE homeGoals IS NULL";
     
     connection.query(sql, function (err, result) {
         if (err) throw err;
-        console.log(result);   
-    })
-    
+        
+        for (let i = 0; i < result.length; i++) {
+            matchesToPredict.push(
+                {
+                    homeTeam: result[i]["homeTeam"],
+                    awayTeam: result[i]["awayTeam"],
+                    round: result[i]["round"],
+                })
+            }
+        })
+        response.json(matchesToPredict);
     connection.end();
+    matchesToPredict = [];
     console.log("Disconnected!");
-});
-
+});   

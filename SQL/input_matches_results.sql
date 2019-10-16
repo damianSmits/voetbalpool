@@ -9,6 +9,7 @@ DELETE FROM teams
 WHERE teamName = "Henkie";
 
 
+
 INSERT INTO fixtures (homeTeam, awayTeam, round) VALUES(
 	"PSV",
     "Ajax",
