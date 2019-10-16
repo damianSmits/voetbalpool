@@ -6,7 +6,7 @@ INSERT INTO teams (teamName, poule) VALUES (
 SELECT * FROM teams;
 
 DELETE FROM teams 
-WHERE teamName = "Henkie";
+WHERE teamName = "llllll";
 
 
 

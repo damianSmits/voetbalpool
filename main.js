@@ -9,6 +9,8 @@ app.use(express.json());
 
 app.listen(8000, () => console.log('Example app listening on port 8000!'));
 
+
+
 app.post("/api/addTeam", function (request, response) {
     console.log("Api call received for /addTeam");
 
@@ -59,13 +61,8 @@ app.post("/api/addMatch", function (request, response) {
     console.log("Disconnected!");
 });
 
-let matches = [];
-let playedMatches = [];
-let matchesToPredict = [];
-
 app.post("/api/showMatch/", function (request, response) {
     console.log("Api call received for /showmatch");
-    
     var connection = mysql.createConnection({
         host: "localhost",
         user: "henk",
@@ -80,6 +77,7 @@ app.post("/api/showMatch/", function (request, response) {
     let sql = "SELECT * FROM fixtures WHERE round = '" + request.body["round"] + "' AND homeGoals IS NULL;";
     
     connection.query(sql, function (err, result) {
+        let matches = [];
         if (err) throw err;
         for (let i = 0; i < result.length; i++) {
             matches.push(
@@ -90,11 +88,10 @@ app.post("/api/showMatch/", function (request, response) {
                 })
             }
             console.log(matches);
+            response.json(matches);
         }) 
     connection.end();
     console.log("Disconnected!");
-    response.json(matches);
-    matches = [];
     
 });
    
@@ -117,8 +114,8 @@ app.get("/api/getPlayed/", function (request, response) {
     let sql = "SELECT * FROM fixtures WHERE homeGoals IS NOT NULL";
     
     connection.query(sql, function (err, result) {
+        let playedMatches = [];
         if (err) throw err;
-        
         for (let i = 0; i < result.length; i++) {
             playedMatches.push(
                 {
@@ -128,10 +125,9 @@ app.get("/api/getPlayed/", function (request, response) {
                     awayGoals: result[i]["awayGoals"],
                 })
             }
+            response.json(playedMatches);
         })
-        response.json(playedMatches);
     connection.end();
-    playedMatches = [];
     console.log("Disconnected!");
 });
 
@@ -238,6 +234,7 @@ app.get("/api/getMatchesToPredict/", function (request, response) {
     let sql = "SELECT * FROM fixtures WHERE homeGoals IS NULL";
     
     connection.query(sql, function (err, result) {
+        let matchesToPredict = [];
         if (err) throw err;
         
         for (let i = 0; i < result.length; i++) {
@@ -247,10 +244,76 @@ app.get("/api/getMatchesToPredict/", function (request, response) {
                     awayTeam: result[i]["awayTeam"],
                     round: result[i]["round"],
                 })
-            }
-        })
-        response.json(matchesToPredict);
+            }response.json(matchesToPredict);
+        }) 
     connection.end();
-    matchesToPredict = [];
     console.log("Disconnected!");
 });   
+
+app.post("/api/sendMatchPrediction", async function (request, response) {
+    console.log("Api call received for /userLogin");
+    
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    
+    let sql = "INSERT INTO predictions SET userID = (SELECT userID FROM users WHERE userName = '" 
+    + request.body["userName"] + "'), fixtureID = (SELECT fixtureID FROM fixtures WHERE homeTeam = '" 
+    + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "'), predictedHomeGoals = '"
+    + request.body["homeGoals"] + "', predictedAwayGoals = '" + request.body["awayGoals"] + "';";
+
+    connection.query(sql, async function (err, result) {
+        if (err) throw err;
+    }) 
+    connection.end();
+    console.log("Disconnected!");
+})
+
+
+
+app.post("/api/getMyPredictions/", function (request, response) {
+    console.log("Api call received for /getMyPredictions");
+    
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID WHERE userID = (SELECT userID from users WHERE userName = '" + request.body["userName"] + "');";
+    
+    connection.query(sql, function (err, result) {
+        let myPredictedMatches = [];
+        if (err) throw err;
+        for (let i = 0; i < result.length; i++) {
+            myPredictedMatches.push(
+                {
+                    homeTeam: result[i]["homeTeam"],
+                    awayTeam: result[i]["awayTeam"],
+                    predictedAwayGoals: result[i]["predictedAwayGoals"],
+                    predictedHomeGoals: result[i]["predictedHomeGoals"],
+                    round: result[i]["round"]
+                })
+            }
+            response.json(myPredictedMatches);
+            
+            console.log(myPredictedMatches);
+        }) 
+    connection.end();
+    console.log("Disconnected!"); 
+});
+
+

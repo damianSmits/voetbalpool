@@ -11,7 +11,7 @@ CREATE TABLE fixtures (
     fixtureID INT AUTO_INCREMENT,
     homeTeam varchar(50) NOT NULL,
     awayTeam varchar(50) NOT NULL,
-    round VARCHAR(3) NOT NULL,
+    round VARCHAR(10) NOT NULL,
     homeGoals INT,
     awayGoals INT,
     PRIMARY KEY (fixtureID),
