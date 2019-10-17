@@ -17,7 +17,7 @@ INSERT INTO fixtures (homeTeam, awayTeam, round) VALUES(
 );
 
 DELETE FROM fixtures
-WHERE fixtureID = 24;
+WHERE homeTeam = "Henkie";
 
 SELECT * FROM fixtures; 
 

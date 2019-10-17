@@ -10,4 +10,4 @@ SET userName = "admin",
 SELECT * FROM users;
 
 DELETE FROM users
-WHERE userName = "henk";
+WHERE userName = "777";

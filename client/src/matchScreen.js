@@ -2,7 +2,6 @@ export default {
     props: [ 'playedMatches' ],
     data() {
         return {  
-               
         }
     },
     

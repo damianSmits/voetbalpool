@@ -34,13 +34,6 @@ Vue.component('register-screen', (resolve) => {
     });   
 });
 
-Vue.component('login-screen', (resolve) => {
-    import('./loginScreen.js')
-    .then((loginScreen) => {
-      resolve(loginScreen.default);
-    });   
-});
-
 Vue.component('predict-screen', (resolve) => {
     import('./predictScreen.js')
     .then((predictScreen) => {
@@ -64,14 +57,14 @@ data: {
     matches: [],
     playedMatches: [],
     showMatchesForResult: false,
-    showRegisterForm: false,
-    showUserLogin: false, 
+    showRegisterForm: false, 
     predictMatches: false,
     matchesToPredict: [],
     errorMessage: "",
     showMyPredictions: false,
     myPredictions: [],
     isAdmin: false,
+    userName:""
 },
 
 computed: {
@@ -84,7 +77,6 @@ methods: {
         this.showMatchesForResult=false;
         this.predictMatches=false;
         this.showRegisterForm = false;
-        this.showUserLogin= false;
         this.predictMatches = false;
         this.showMyPredictions = false;
     },
@@ -102,11 +94,7 @@ methods: {
         this.showRegisterForm= !this.showRegisterForm
         return this.showRegisterForm 
     },
-    async goToLogin(){
-        this.hideAllScreens();
-        this.showUserLogin= !this.showUserLogin
-        return this.showUserLogin 
-    },
+   
     async showPlayedMatchespls(){
         this.hideAllScreens();
         this.showPlayed= !this.showPlayed;
@@ -164,7 +152,7 @@ methods: {
         let matches = await response.json();
         this.matches=matches;
         console.log(matches);
-        this.showMatchesForResult= !this.showMatchesForResult;
+        this.showMatchesForResult= true;
         return this.showMatchesForResult; 
     },
 
@@ -182,12 +170,13 @@ methods: {
         this.showPlayedMatchespls();
 
     },
-    async sendResults(homeTeam, awayTeam, homeGoals, awayGoals){
+    async sendResults(homeTeam, awayTeam, homeGoals, awayGoals, round){
         let newMatchToGiveResult = {
             "homeTeam": homeTeam,
             "awayTeam": awayTeam,
             "homeGoals": homeGoals,
-            "awayGoals": awayGoals
+            "awayGoals": awayGoals,
+            "round":round
          }
         let response = await fetch('/api/sendResults/', {
             method: 'POST',
@@ -202,6 +191,8 @@ methods: {
     },
     async registerUser(userName, password, email){
         console.log(userName + "" + password + "" + email);
+        alert("welkom!")
+        this.hideAllScreens();
         let newUser = {
             "userName": userName,
             "password": password,
@@ -215,6 +206,7 @@ methods: {
             },
             body: JSON.stringify(newUser)  
         })
+        
     },
     async userLogin(userName, password){
         let newLogin= {
@@ -234,11 +226,11 @@ methods: {
         if(userLoggingIn !== "NEE"){
             localStorage.setItem("username", userLoggingIn)
             alert("Jeuu " + userLoggingIn);
+            this.hideAllScreens();
+            this.userName=userLoggingIn;
+            location.reload();
         } else {
         alert("flauwekul ingevuld")
-        }
-        if (localStorage["username"] === "admin"){
-            this.isAdmin = true;
         }
     },
     async showMatchesToPredict(){

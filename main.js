@@ -9,8 +9,6 @@ app.use(express.json());
 
 app.listen(1234, () => console.log('Example app listening on port 1234!'));
 
-
-
 app.post("/api/addTeam", function (request, response) {
     console.log("Api call received for /addTeam");
 
@@ -83,7 +81,8 @@ app.post("/api/showMatch/", function (request, response) {
             matches.push(
                 {
                     homeTeam: result[i]["homeTeam"],
-                    awayTeam: result[i]["awayTeam"]
+                    awayTeam: result[i]["awayTeam"],
+                    round: result[i]["round"]
                     
                 })
             }
@@ -146,7 +145,7 @@ app.post("/api/sendResults", function (request, response) {
         console.log("Connected!");
     });
     console.log(request.body);
-    let sql = "UPDATE fixtures SET homeGoals = '" + request.body["homeGoals"] + "', awayGoals = '" + request.body["awayGoals"] + "' WHERE homeTeam = '" + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "';";
+    let sql = "UPDATE fixtures SET homeGoals = '" + request.body["homeGoals"] + "', awayGoals = '" + request.body["awayGoals"] + "' WHERE homeTeam = '" + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "' AND  round = '" + request.body["round"] + "';";
     
     connection.query(sql, function (err, result) {
         if (err) throw err;

@@ -19,9 +19,11 @@
             v-on:admin-confirmed="goToAdmin"
             v-on:get-played-matches="getPlayedMatches"
             v-on:show-register-user="goToRegister"
-            v-on:show-user-login="goToLogin"
+            v-on:user-log-off="hideAllScreens"
             v-on:show-matches-to-predict="goToPredictMatches"
-            v-on:show-my-predictions="getMyPredictions">
+            v-on:show-my-predictions="getMyPredictions"
+            v-on:user-login="userLogin"
+            v-bind:user-name="userName">
             </links>
 
             <admin-screen
@@ -48,11 +50,6 @@
                 v-if=showRegisterForm
                 v-on:register-user="registerUser">
             </register-screen>
-
-            <login-screen
-                v-if=showUserLogin
-                v-on:user-login="userLogin">
-            </login-screen>
             
             <predict-screen
                 v-if=predictMatches
