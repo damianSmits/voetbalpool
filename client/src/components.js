@@ -1,301 +1,59 @@
-Vue.component('links', {
-    data() {
-        return {
-            isAdmin: true,
-            userName: ""
-        }
-    },
-    template: `
-        <div>
-            <button v-on:click="adminRights" v-if=isAdmin>admin</button>
-            <button v-on:click="getPlayedMatches">laat afgelopen potjes zien</button>  
-            <button v-on:click="showRegisterUser">Registreer</button>
-            <button v-on:click="showMatchesToPredict">voorspel komende potjes</button>
-            <button v-on:click="showMyPredictions">Mijn voorspellingen</button>
-            <button v-on:click="showUserLogin">Inloggen</button>  
-            <button v-on:click="userLogOff">Uitloggen</button> 
-        </div>
-            
-    `,
-    methods: {   
-        adminRights(){
-            
-            this.$emit('admin-confirmed'); 
-        },
-        getPlayedMatches(){
-            this.$emit('get-played-matches'); 
-        },
-        showPlayedMatches(){
-            this.$emit('show-played-matches'); 
-        },
-        showRegisterUser(){
-            this.$emit('show-register-user'); 
-        },
-        showUserLogin(){
-            this.$emit('show-user-login'); 
-        },
-        showMatchesToPredict(){
-            this.$emit('show-matches-to-predict'); 
-        },
-        userLogOff(){
-            if(localStorage.length != 0){
-            localStorage.clear();
-            alert("k doei")
-            }
-        },
-        showMyPredictions(){
-            if(localStorage.length != 0){
-                userName = localStorage["username"]
-            }
-            this.$emit('show-my-predictions', userName);
-        }
-    },       
- });
-
-Vue.component('admin-screen', {
-    props: [ 'matches' ],
-    data() {
-        return {
-            teamName: undefined,
-            homeTeam:"",
-            awayTeam:"",
-            awayGoals:"",
-            homeGoals:"",
-            round:0,
-            roundThatHasBeen:0,
-            errorMessage: "",
-        }
-    },
-    
-    template: `
-        <div>
-            </br> {{ errorMessage }} </br>
-            Voeg Team toe
-            </br><input placeholder = 'naam' v-model="teamName"/>
-           
-            </br><button v-on:click="confirmTeam">Stort</button>
-            </br>
-            </br></br>
-
-            Kan ook wel wedstrijd toevoegen als je wilt
-            </br><input placeholder = 'Thuisteam' v-model="homeTeam"/>
-            </br><input placeholder = 'Uitteam' v-model="awayTeam"/>
-            </br><input placeholder = 'Speelronde' v-model="round" min = 0 step =1/>Speelronde
-            </br><button v-on:click="confirmMatch">Stort</button>
-            
-            </br></br>
-
-            Of missschien uitslagen invullen van speelronde:
-            </br><input placeholder = 'round' v-model="roundThatHasBeen" min = 0 step =1/>
-            </br><button v-on:click="showMatches">Laat zien dan</button>
-            
-            </div>
-    `,
-    methods: {
-        confirmTeam() {
-            if (!this.teamName) {
-                this.errorMessage = "wel team naam toevoegen";
-                return;
-            }
-
-            this.errorMessage = "";
-            this.$emit('team-confirmed', this.teamName);                 
-        },
-        confirmMatch() {
-            if (!this.homeTeam || !this.awayTeam) {
-                this.errorMessage = "wel team naam toevoegen";
-                return;
-            }
-
-            this.errorMessage = "";
-            this.$emit('match-confirmed', this.homeTeam, this.awayTeam, this.round);                 
-        },
-        showMatches() {
-            if (!this.roundThatHasBeen) {
-                this.errorMessage = "wel speelronde toevoegen";
-                return;
-            }
-            this.errorMessage = "";
-            this.$emit('show-matches', this.roundThatHasBeen);
-        }
-    }
+Vue.component('links', (resolve) => {
+    import('./links.js')
+    .then((links) => {
+      resolve(links.default);
+    });   
 });
 
- Vue.component('matches-screen', {
-    props: [ 'playedMatches' ],
-    data() {
-        return {  
-               
-        }
-    },
-    
-    template: `
-        <div>
-                <li v-for="match in playedMatches">
-                    {{ match["homeTeam"] }} vs. {{ match["awayTeam"] }}&nbsp;&nbsp;
-                    {{ match["homeGoals"] }}-{{ match["awayGoals"] }}
-                </li>
-        </div>
-    `,
-    methods: {   
-    }
- });
+Vue.component('admin-screen', (resolve) => {
+    import('./adminScreen.js')
+    .then((adminScreen) => {
+      resolve(adminScreen.default);
+    });   
+});
+
+ Vue.component('matches-screen', (resolve) => {
+    import('./matchScreen.js')
+    .then((matchScreen) => {
+      resolve(matchScreen.default);
+    });   
+});
  
 
- Vue.component('fill-in-results-screen', {
-    props: [ 'matches' ],
-    data() {
-        return {  
-               homeTeam: "",
-               awayTeam: "",
-               homeGoals: 0,
-               awayGoals: 0
-        }
-    },
-    
-    template: `
-        <div>
-                <li v-for="match in matches">
-                    <label>{{ match["homeTeam"] }}</label> 
-                    <input min = 0 step =1 size="1">-
-                    <input min = 0 step =1 size="1"> 
-                    <label>{{ match["awayTeam"] }}</label>&nbsp;&nbsp;
-                    <button v-on:click="sendMatchResults">Stort</button> 
-                </li>
-        </div>
-            
-    `,
-    methods: { 
-        sendMatchResults(){
-            console.log(event.target.parentNode.children[3].value)
-            this.$emit("give-results-to-matches", event.target.parentNode.children[0].innerHTML, event.target.parentNode.children[3].innerHTML, event.target.parentNode.children[1].value, event.target.parentNode.children[2].value)
-        }  
-    }
- });
+Vue.component('fill-in-results-screen', (resolve) => {
+    import('./fillInResultsScreen.js')
+    .then((fillInResultsScreen) => {
+      resolve(fillInResultsScreen.default);
+    });   
+});
 
+Vue.component('register-screen', (resolve) => {
+    import('./registerScreen.js')
+    .then((registerScreen) => {
+      resolve(registerScreen.default);
+    });   
+});
 
- Vue.component('register-screen', {
-    data() {
-        return {  
-               userName: "",
-               password: "",
-               email:""
-        }
-    },
-    
-    template: `
-        <div>
-            <input v-model="userName" placeholder ="user name" ></br>
-            <input v-model="password" placeholder ="password" type ="password"></br>
-            <input v-model="email" placeholder ="email" >
-            <button v-on:click="registerpls">Registreer</button>
-        </div>
-            
-    `,
-    methods: { 
-        registerpls(){
-            console.log()
-            this.$emit("register-user", this.userName, this.password, this.email)
-        }  
-    }
- });
+Vue.component('login-screen', (resolve) => {
+    import('./loginScreen.js')
+    .then((loginScreen) => {
+      resolve(loginScreen.default);
+    });   
+});
 
+Vue.component('predict-screen', (resolve) => {
+    import('./predictScreen.js')
+    .then((predictScreen) => {
+      resolve(predictScreen.default);
+    });   
+});
 
- Vue.component('login-screen', {
-    data() {
-        return {  
-               userName: "",
-               password: "",
-               errorMessage: "",
-        }
-    },
-    
-    template: `
-        <div>
-            <input v-model="userName" placeholder ="user name" ></br>
-            <input v-model="password" placeholder ="password" type ="password"></br>
-            <button v-on:click="logIn">Log in</button>
-
-            {{ errorMessage }}
-        </div>
-            
-    `,
-    methods: { 
-        logIn(){
-            console.log()
-            this.$emit("user-login", this.userName, this.password, this.errorMessage)
-        }  
-    }
- });
-
- Vue.component('predict-screen', {
-    props: [ 'matchesToPredict' ],
-    data() {
-        return {  
-               homeGoals: undefined,
-               awayGoals: undefined,
-               homeTeam: undefined,
-               awayTeam: undefined,
-               ronde:false,
-               errorMessage:"",
-        }
-    },
-    
-    template: `
-        <div>
-            <button v-on:click="startMatchPrediction">haal wedstrijden op</button>
-            </br></br>{{ errorMessage }}</br></br>
-            
-            <li v-for="match in matchesToPredict">
-                    {{ match["round"] }}: <label>{{ match["homeTeam"] }}</label> 
-                    <input min = 0 step =1 size="1"> -
-                    <input min = 0 step =1 size="1"> 
-                    <label>{{ match["awayTeam"] }}</label>&nbsp;&nbsp;
-                    <button v-on:click="sendPrediction">voorspel!</button>
-                </li>
-        </div>
-            
-    `,
-    methods: { 
-        startMatchPrediction(){
-            this.$emit("predict-matches")
-        },
-        sendPrediction(){
-            if(localStorage.length == 0){
-                this.errorMessage = "bennie ingelogd"
-            } else{
-                console.log(event.target.parentNode.children[1].value)
-                this.$emit("send-prediction", event.target.parentNode.children[1].value, event.target.parentNode.children[0].innerHTML, 
-                event.target.parentNode.children[3].innerHTML, event.target.parentNode.children[2].value, localStorage["username"])
-            }
-        }    
-    }
- });
-
- Vue.component('my-predictions-screen', {
-    props: [ 'myPredictions' ],
-    data() {
-        return {
-            errorMessage:"",  
-        }
-    },
-    
-    template: `
-        <div>
-            
-            </br></br>{{ errorMessage }}</br></br>
-            <li v-for="prediction in myPredictions">
-                    {{ prediction["round"] }}: <label>{{ prediction["homeTeam"] }}</label> 
-                    {{ prediction["predictedHomeGoals"] }} -
-                    {{ prediction["predictedAwayGoals"] }}
-                    <label>{{ prediction["awayTeam"] }}</label>
-                </li>
-        </div>
-            
-    `,
-    methods: { 
-    }
- });
+Vue.component('my-predictions-screen', (resolve) => {
+    import('./myPredictionsScreen.js')
+    .then((myPredictionsScreen) => {
+      resolve(myPredictionsScreen.default);
+    });   
+});
 
 const app = new Vue({
 el: '#app',
@@ -355,6 +113,7 @@ methods: {
         return this.showPlayed; 
     },
     async goToPredictMatches(){
+        this.showMatchesToPredict();
         this.hideAllScreens();
         this.predictMatches= !this.predictMatches;
         return this.predictMatches; 
