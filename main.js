@@ -7,7 +7,7 @@ app.use(express.static('client'));
 
 app.use(express.json());
 
-app.listen(8000, () => console.log('Example app listening on port 8000!'));
+app.listen(1234, () => console.log('Example app listening on port 1234!'));
 
 
 
@@ -281,6 +281,7 @@ app.post("/api/sendMatchPrediction", async function (request, response) {
 
 app.post("/api/getMyPredictions/", function (request, response) {
     console.log("Api call received for /getMyPredictions");
+    console.log(request.body["homeTeam"])
     
     var connection = mysql.createConnection({
         host: "localhost",
@@ -315,5 +316,4 @@ app.post("/api/getMyPredictions/", function (request, response) {
     connection.end();
     console.log("Disconnected!"); 
 });
-
 

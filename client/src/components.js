@@ -1,11 +1,13 @@
 Vue.component('links', {
     data() {
         return {
+            isAdmin: true,
+            userName: ""
         }
     },
     template: `
         <div>
-            <button v-on:click="adminRights">admin</button>
+            <button v-on:click="adminRights" v-if=isAdmin>admin</button>
             <button v-on:click="getPlayedMatches">laat afgelopen potjes zien</button>  
             <button v-on:click="showRegisterUser">Registreer</button>
             <button v-on:click="showMatchesToPredict">voorspel komende potjes</button>
@@ -17,7 +19,7 @@ Vue.component('links', {
     `,
     methods: {   
         adminRights(){
-            this.$emit('admin-confirmed'); 
+            this.$emit('admin-confirmed', isAdmin); 
         },
         getPlayedMatches(){
             this.$emit('get-played-matches'); 
@@ -41,7 +43,10 @@ Vue.component('links', {
             }
         },
         showMyPredictions(){
-            this.$emit('show-my-predictions');
+            if(localStorage.length != 0){
+                userName = localStorage["username"]
+            }
+            this.$emit('show-my-predictions', userName);
         }
     },       
  });
@@ -278,7 +283,6 @@ Vue.component('admin-screen', {
         <div>
             
             </br></br>{{ errorMessage }}</br></br>
-            
             <li v-for="prediction in myPredictions">
                     {{ prediction["round"] }}: <label>{{ prediction["homeTeam"] }}</label> 
                     {{ prediction["predictedHomeGoals"] }} -
@@ -308,6 +312,7 @@ data: {
     errorMessage: "",
     showMyPredictions: false,
     myPredictions: [],
+    isAdmin: false,
 },
 
 computed: {
@@ -331,7 +336,6 @@ methods: {
         } else {
             alert("volgens mij ben jij helemaal geen admin")
         }
-
         return this.haveAdminRights 
     },
     async goToRegister(){
@@ -453,7 +457,6 @@ methods: {
         })
     },
     async userLogin(userName, password){
-        
         let newLogin= {
             "userName": userName,
             "password": password
@@ -470,9 +473,12 @@ methods: {
         console.log(userLoggingIn)
         if(userLoggingIn !== "NEE"){
             localStorage.setItem("username", userLoggingIn)
+            alert("Jeuu " + userLoggingIn);
+        } else {
+        alert("flauwekul ingevuld")
         }
-        else{
-            console.log("flauwekul ingevuld")
+        if (localStorage["username"] === "admin"){
+            this.isAdmin = true;
         }
     },
     async showMatchesToPredict(){
@@ -505,6 +511,7 @@ methods: {
         })
     },
     async getMyPredictions(userName){
+        console.log(userName)
         let newMyPredictions = {"userName": userName};
         let response = await fetch('api/getMyPredictions/', {
             method: 'POST',
