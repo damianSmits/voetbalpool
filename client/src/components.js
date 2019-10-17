@@ -19,7 +19,8 @@ Vue.component('links', {
     `,
     methods: {   
         adminRights(){
-            this.$emit('admin-confirmed', isAdmin); 
+            
+            this.$emit('admin-confirmed'); 
         },
         getPlayedMatches(){
             this.$emit('get-played-matches'); 
