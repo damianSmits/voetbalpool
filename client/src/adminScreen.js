@@ -7,11 +7,13 @@ export default {
             awayTeam:"",
             awayGoals:"",
             homeGoals:"",
-            round:0,
-            roundThatHasBeen:0,
+            round:"",
+            roundThatHasBeen:"",
             errorMessage: "",
             confirmedTeamMessage: "",
             confirmedMatchMessage: "",
+            datum:"",
+            confirmedScoreMessage: "",
         }
     },
     
@@ -30,6 +32,7 @@ export default {
             </br><input placeholder = 'Thuisteam' v-model="homeTeam"/>
             </br><input placeholder = 'Uitteam' v-model="awayTeam"/>
             </br><input placeholder = 'Speelronde' v-model="round"/>
+            </br><input placeholder = 'yyyymmdd' v-model="datum" />
 
             </br><button v-on:click="confirmMatch">Stort</button>
             {{ confirmedMatchMessage }}
@@ -44,6 +47,7 @@ export default {
 
             Laatste optie: geef punten aan spelers
             </br><button v-on:click="giveScore">score</button>
+            {{ comfirmedScoreMessage }}
             </div>
     `,
     methods: {
@@ -63,7 +67,7 @@ export default {
             }
             this.confirmedMatchMessage = this.homeTeam + " - " + this.awayTeam + " toegevoegd!"
             this.errorMessage = "";
-            this.$emit('match-confirmed', this.homeTeam, this.awayTeam, this.round);                 
+            this.$emit('match-confirmed', this.homeTeam, this.awayTeam, this.round, this.datum);                 
         },
         showMatches() {
             if (!this.roundThatHasBeen) {
@@ -74,6 +78,7 @@ export default {
             this.$emit('show-matches', this.roundThatHasBeen);
         },
         giveScore(){
+            this.confirmedScoreMessage = "Kijke maar bij lijsje";
             this.$emit('give-score')
         }
     }

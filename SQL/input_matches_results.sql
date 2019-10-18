@@ -21,11 +21,14 @@ WHERE homeTeam = "Fred";
 
 SELECT * FROM fixtures; 
 
-SELECT * FROM fixtures WHERE homeGoals IS NOT NULL;
+SELECT * FROM fixtures 
+	WHERE homeGoals IS NOT NULL 
+	AND datum BETWEEN date_sub(now(),INTERVAL 1 WEEK) AND now();
 
 UPDATE fixtures 
-	SET homeGoals = 2, awayGoals = 0
-    WHERE fixtureID = 33;
+	SET datum = 20191006
+    WHERE fixtureID = 21;
 
-
+ALTER TABLE fixtures 
+	ADD COLUMN datum DATE NOT NULL DEFAULT 20190101;
     

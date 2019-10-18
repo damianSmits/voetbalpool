@@ -111,7 +111,7 @@ app.get("/api/getPlayed/", function (request, response) {
         if (err) throw err;
         console.log("Connected!");
     });
-    let sql = "SELECT * FROM fixtures WHERE homeGoals IS NOT NULL";
+    let sql = "SELECT * FROM fixtures WHERE homeGoals IS NOT NULL AND datum BETWEEN date_sub(now(),INTERVAL 1 WEEK) AND now()";
     
     connection.query(sql, function (err, result) {
         let playedMatches = [];
@@ -123,6 +123,7 @@ app.get("/api/getPlayed/", function (request, response) {
                     awayTeam: result[i]["awayTeam"],
                     homeGoals: result[i]["homeGoals"],
                     awayGoals: result[i]["awayGoals"],
+                    datum: result[i]["datum"]
                 })
             }
             response.json(playedMatches);

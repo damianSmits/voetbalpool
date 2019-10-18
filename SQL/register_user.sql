@@ -9,5 +9,9 @@ SET userName = "admin",
     
 SELECT * FROM users;
 
+UPDATE users
+ SET userPassword = "piet"
+ WHERE userID = 3;
+
 DELETE FROM users
 WHERE userName = "Karel";

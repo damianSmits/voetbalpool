@@ -138,12 +138,13 @@ methods: {
             body: JSON.stringify(newTeam)  
         })
     },
-    async addMatch(homeTeam, awayTeam, round){
-        console.log(homeTeam + "" + awayTeam + "" + round);
+    async addMatch(homeTeam, awayTeam, round, datum){
+        console.log(homeTeam + " " + awayTeam + " " + round + " " + datum);
         let newMatch = {
             "homeTeam": homeTeam,
             "awayTeam": awayTeam,
-            "round": round
+            "round": round,
+            "datum": datum
     }
         await fetch('api/addMatch', {
             method: 'POST',
