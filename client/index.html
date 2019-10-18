@@ -22,6 +22,7 @@
             v-on:user-log-off="hideAllScreens"
             v-on:show-matches-to-predict="goToPredictMatches"
             v-on:show-my-predictions="getMyPredictions"
+            v-on:show-leaderboard="getLeaderboard"
             v-on:user-login="userLogin"
             v-bind:user-name="userName">
             </links>
@@ -31,6 +32,7 @@
             v-on:team-confirmed="addTeam"
             v-on:match-confirmed="addMatch"
             v-on:show-matches="getMatchesToGiveResult"
+            v-on:give-score="scorePredictions"
             >
             </admin-screen>      
         
@@ -64,11 +66,13 @@
                 v-on:show-my-predictions=getMyPredictions>
             </my-predictions-screen>
 
+            <leaderboard-screen
+                v-if=showLeaderboard
+                v-bind:users="users">
+            </leaderboard-screen>
+
         </div>
-        <script src="src/components.js">
-        
-    
-    </script>
+        <script src="src/components.js"></script>
     </body>
 </html>
 

@@ -40,7 +40,10 @@ export default {
             </br><input placeholder = 'round' v-model="roundThatHasBeen" min = 0 step =1/>
             </br><button v-on:click="showMatches">Laat zien dan</button>
             
+            </br></br>
 
+            Laatste optie: geef punten aan spelers
+            </br><button v-on:click="giveScore">score</button>
             </div>
     `,
     methods: {
@@ -69,6 +72,9 @@ export default {
             }
             this.errorMessage = "";
             this.$emit('show-matches', this.roundThatHasBeen);
+        },
+        giveScore(){
+            this.$emit('give-score')
         }
     }
 

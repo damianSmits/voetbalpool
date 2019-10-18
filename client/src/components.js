@@ -48,6 +48,14 @@ Vue.component('my-predictions-screen', (resolve) => {
     });   
 });
 
+Vue.component('leaderboard-screen', (resolve) => {
+    import('./leaderboardScreen.js')
+    .then((leaderboard) => {
+      resolve(leaderboard.default);
+    });   
+});
+
+
 const app = new Vue({
 el: '#app',
 
@@ -64,7 +72,8 @@ data: {
     showMyPredictions: false,
     myPredictions: [],
     isAdmin: false,
-    userName:""
+    userName:"",
+    showLeaderboard: false,
 },
 
 computed: {
@@ -79,6 +88,7 @@ methods: {
         this.showRegisterForm = false;
         this.predictMatches = false;
         this.showMyPredictions = false;
+        this.showLeaderboard = false;
     },
     async goToAdmin(){
         this.hideAllScreens();
@@ -110,6 +120,11 @@ methods: {
         this.hideAllScreens();
         this.showMyPredictions= !this.showMyPredictions;
         return this.showMyPredictions; 
+    },
+    async goToLeaderboard(){
+        this.hideAllScreens();
+        this.showLeaderboard= !this.showLeaderboard;
+        return this.showLeaderboard; 
     },
     async addTeam(teamName){
         console.log(teamName);
@@ -277,6 +292,29 @@ methods: {
         this.myPredictions = myPredictions;
         console.log(myPredictions);
         this.goToMyPredictions();
+    },
+    async scorePredictions(){
+        console.log("scoring...")
+        await fetch('api/scorePredictions/', {
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        })
+    },
+    async getLeaderboard(){
+        let response = await fetch('api/getLeaderboard/', {
+            method: 'GET',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        })
+        users = await response.json()
+        this.users = users;
+        console.log(users)
+        this.goToLeaderboard()
     },
 },  
 })            

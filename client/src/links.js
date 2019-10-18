@@ -1,4 +1,7 @@
 export default {
+    created(){
+        this.checkUser()
+    },
     data() {
         return {
             userName: "",
@@ -14,6 +17,7 @@ export default {
             <button v-on:click="getPlayedMatches">laat afgelopen potjes zien</button>  
             <button v-on:click="showMatchesToPredict" v-if=!isNotLoggedIn>voorspel komende potjes</button>
             <button v-on:click="showMyPredictions" v-if=!isNotLoggedIn>Mijn voorspellingen</button>
+            <button v-on:click="showLeaderboard" v-if=!isNotLoggedIn>leaderboard</button>
             <button v-on:click="showRegisterUser" v-if=isNotLoggedIn>Registreer</button>
             <input v-model="userName" align="" v-if=isNotLoggedIn></input><input v-model="password" type="password" v-if=isNotLoggedIn></input>
             <button v-on:click="userLogin" v-if=isNotLoggedIn>Inloggen</button>  
@@ -75,6 +79,11 @@ export default {
             this.checkUser();
             this.userName = localStorage["username"]
             this.$emit('show-my-predictions', this.userName);
+        },
+        showLeaderboard(){
+            this.checkUser();
+            this.userName = localStorage["username"]
+            this.$emit('show-leaderboard');
         },
         userLogin(){
             this.checkUser();

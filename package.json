@@ -4,7 +4,9 @@
   "description": "Het project voor eigen opdracht",
   "main": "main.js",
   "scripts": {
-    "test": "ava"
+    "test": "ava test.js --verbose",
+    "test:watch": "ava test.js --verbose --watch",
+    "ava": "ava --verbose"
   },
   "dependencies": {
     "express": "^4.16.4",

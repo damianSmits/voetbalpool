@@ -30,7 +30,7 @@ export default {
         sendMatchResults(){
             this.confirmedResultMessage = event.target.parentNode.children[1].innerHTML + " - " + event.target.parentNode.children[4].innerHTML + " resultaat toegevoegd!"
             console.log(event.target.parentNode.children[1].innerHTML)
-            this.$emit("give-results-to-matches", event.target.parentNode.children[1].innerHTML, event.target.parentNode.children[1].innerHTML, event.target.parentNode.children[2].value, event.target.parentNode.children[3].value, event.target.parentNode.children[0].innerHTML)
+            this.$emit("give-results-to-matches", event.target.parentNode.children[1].innerHTML, event.target.parentNode.children[4].innerHTML, event.target.parentNode.children[2].value, event.target.parentNode.children[3].value, event.target.parentNode.children[0].innerHTML)
         }  
     }
 }

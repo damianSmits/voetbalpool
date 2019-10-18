@@ -1,4 +1,5 @@
 const express = require('express');
+const optellert = require('./optellert')
 const app = express();
 
 var mysql = require('mysql2');
@@ -316,3 +317,66 @@ app.post("/api/getMyPredictions/", function (request, response) {
     console.log("Disconnected!"); 
 });
 
+app.post("/api/scorePredictions", async function (request, response) {
+    console.log("Api call received for /scorePredictions");
+    
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    
+    let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID INNER JOIN users on users.userID = predictions.userID WHERE checked = false AND fixtures.homeGoals IS NOT NULL";
+
+    connection.query(sql, async function (err, result) {
+        if (err) throw err;
+        for (let i=0; i<result.length; i++){
+            
+            let sqlUpdate = "update users SET score = score + '"+ optellert.getScore(result[i]["homeGoals"], result[i]["awayGoals"], result[i]["predictedHomeGoals"], result[i]["predictedAwayGoals"], result[i]["userID"]) +"' WHERE userID = '" + result[i]["userID"] +"';";
+
+            connection.query(sqlUpdate, async function (err, result) {
+            if (err) throw err;
+            }) 
+        }
+    }) 
+    connection.end();
+    console.log("Disconnected!");
+})
+
+app.get("/api/getLeaderboard", async function (request, response) {
+    console.log("Api call received for /getLeaderboard");
+    
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });
+    
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+    
+    let sql = "SELECT * FROM users ORDER BY score DESC;";
+
+    connection.query(sql, async function (err, result) {
+        let users = [];
+        if (err) throw err;
+        for (let i=0; i<result.length; i++){
+            users.push(
+                {
+                userName: result[i]["userName"],
+                score: result[i]["score"]
+            })
+        }response.json(users);
+    }) 
+    connection.end();
+    console.log("Disconnected!");
+})

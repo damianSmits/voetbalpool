@@ -1,7 +1,7 @@
 Truncate table predictions;
 
 SELECT userID from users
-WHERE userName = "henk"; 
+WHERE userName = "j"; 
 
 INSERT INTO predictions
 	SET userID = (SELECT userID FROM users WHERE userName = "henk"),
@@ -10,7 +10,7 @@ INSERT INTO predictions
         predictedAwayGoals = 0;
         
 DELETE FROM predictions
-    WHERE fixtureID = 35;
+    WHERE userID = 10;
 
 DELETE FROM fixtures
 	WHERE homeTeam = "Henkie";
@@ -25,5 +25,12 @@ SELECT * FROM teams;
 
 SELECT * FROM predictions
 	INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID 
-	WHERE userID = (SELECT userID from users WHERE userName = "henk");
-	
+    INNER JOIN users on users.userID = predictions.userID
+    WHERE checked = false AND fixtures.homeGoals IS NOT NULL;
+
+SELECT * FROM users
+	ORDER BY score DESC;
+
+UPDATE users
+	SET score = 0
+	WHERE userID = 4;
