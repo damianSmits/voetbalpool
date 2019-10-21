@@ -50,7 +50,7 @@ app.post("/api/addMatch", function (request, response) {
         console.log("Connected!");
     });
     console.log(request.body);
-    let sql = "INSERT INTO fixtures SET homeTeam = '" + request.body["homeTeam"] + "', awayTeam = '" + request.body["awayTeam"] + "', round = '" + request.body["round"] + "';";
+    let sql = "INSERT INTO fixtures SET homeTeam = '" + request.body["homeTeam"] + "', awayTeam = '" + request.body["awayTeam"] + "', round = '" + request.body["round"] + "', datum = '" + request.body["datum"] + "';";
     
     connection.query(sql, function (err, result) {
         if (err) throw err;
@@ -172,7 +172,7 @@ app.post("/api/registerUser", function (request, response) {
         console.log("Connected!");
     });
     console.log(request.body);
-    let sql = "INSERT INTO users SET userName = '" + request.body["userName"] + "', userPassword = '" + request.body["password"] + "', email = '" + request.body["email"] + "', score = 0;";
+    let sql = "INSERT IGNORE INTO users SET userName = '" + request.body["userName"] + "', userPassword = '" + request.body["password"] + "', email = '" + request.body["email"] + "', score = 0;";
     
     connection.query(sql, function (err, result) {
         if (err) throw err;
@@ -295,7 +295,7 @@ app.post("/api/getMyPredictions/", function (request, response) {
         if (err) throw err;
         console.log("Connected!");
     });
-    let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID WHERE userID = (SELECT userID from users WHERE userName = '" + request.body["userName"] + "');";
+    let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID WHERE checked = FALSE AND userID = (SELECT userID from users WHERE userName = '" + request.body["userName"] + "');";
     
     connection.query(sql, function (err, result) {
         let myPredictedMatches = [];
@@ -369,7 +369,7 @@ app.get("/api/getLeaderboard", async function (request, response) {
         console.log("Connected!");
     });
     
-    let sql = "SELECT * FROM users ORDER BY score DESC;";
+    let sql = "SELECT * FROM users WHERE userName <>'damian' ORDER BY score DESC;";
 
     connection.query(sql, async function (err, result) {
         let users = [];

@@ -24,6 +24,7 @@ body {
 	width: 100%;
     text-align: center;
     top: 3.4em;
+    color:white;
 }
 
 a:link{
@@ -52,4 +53,106 @@ a:active{
   display: inline-block;
   margin: 4px 2px;
   cursor: pointer;
+}
+
+.regularButton {
+  background-color: var(--button-color);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.homeTeam{
+    text-align: center;
+    padding: 8px 16px;
+    display: inline-block;
+    width:200px;
+    
+}
+
+.predictionHeader{
+    color: white;
+    padding: 10px;
+    background-color: var(--primary-color);
+    display: inline-block;
+    width:680px;
+    text-align: left;
+
+}
+
+.myPredictionsHeader{
+    color: white;
+    padding: 10px;
+    background-color: var(--primary-color);
+    display: inline-block;
+    width:480px;
+    text-align: left;
+}
+
+.leaderboardHeader{
+    color: white;
+    padding: 10px;
+    background-color: var(--button-color);
+    border: 10px solid var(--button-color);
+    display: inline-block;
+    width:318px;
+    text-align: left;
+}
+
+.score{
+    color: white;
+    padding: 10px;
+    background-color: var(--primary-color);
+    display: inline-block;
+    width:30px;
+    text-align: center;
+
+}
+
+.rank{
+    color: white;
+    padding: 10px;
+    background-color: var(--primary-color);
+    display: inline-block;
+    width:30px;
+    text-align: center;
+
+}
+
+button:disabled,
+button[disabled]{
+  background-color: #cccccc;
+  color: var(--button-color);
+}
+
+.split {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 5.4em;
+  padding-top: 20px;
+}
+
+.left {
+  border-right: 10px solid ;
+  border-right-color: var(--button-color);
+  width: 20%; 
+  left: 10px;
+ 
+}
+.right {
+  width: 100%;
+  right: 0;
+}
+
+.resultsScreen{
+    width: 30%;
+    right: 0;
+    top:120px;
+    left:1100px;
 }

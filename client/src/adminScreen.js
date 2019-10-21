@@ -24,7 +24,7 @@ export default {
             </br><input placeholder = 'naam' v-model="teamName"/>
                 {{ confirmedTeamMessage }}
            
-            </br><button v-on:click="confirmTeam" on:click="color:powderblue;">Stort</button>
+            </br><button class = "regularButton" v-on:click="confirmTeam" on:click="color:powderblue;">Stort</button>
             </br>
             </br></br>
 
@@ -34,20 +34,20 @@ export default {
             </br><input placeholder = 'Speelronde' v-model="round"/>
             </br><input placeholder = 'yyyymmdd' v-model="datum" />
 
-            </br><button v-on:click="confirmMatch">Stort</button>
+            </br><button class = "regularButton" v-on:click="confirmMatch">Stort</button>
             {{ confirmedMatchMessage }}
             
             </br></br>
 
             Of missschien uitslagen invullen van speelronde:
             </br><input placeholder = 'round' v-model="roundThatHasBeen" min = 0 step =1/>
-            </br><button v-on:click="showMatches">Laat zien dan</button>
+            </br><button class = "regularButton" v-on:click="showMatches">Laat zien dan</button>
             
             </br></br>
 
             Laatste optie: geef punten aan spelers
-            </br><button v-on:click="giveScore">score</button>
-            {{ comfirmedScoreMessage }}
+            </br><button class = "regularButton" v-on:click="giveScore">score</button></br>
+            {{ confirmedScoreMessage }}
             </div>
     `,
     methods: {
@@ -78,7 +78,8 @@ export default {
             this.$emit('show-matches', this.roundThatHasBeen);
         },
         giveScore(){
-            this.confirmedScoreMessage = "Kijke maar bij lijsje";
+            event.target.disabled="true";
+            this.confirmedScoreMessage = "Score geteld!";
             this.$emit('give-score')
         }
     }

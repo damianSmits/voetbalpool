@@ -9,11 +9,11 @@ INSERT INTO predictions
         predictedHomeGoals = 3,
         predictedAwayGoals = 0;
         
-DELETE FROM predictions
-    WHERE userID = 10;
+DELETE FROM users
+    WHERE userName = "";
 
 DELETE FROM fixtures
-	WHERE homeTeam = "Henkie";
+	WHERE fixtureID = 56;
 
 DELETE FROM teams
 	WHERE teamName = "Henkie";
@@ -26,11 +26,14 @@ SELECT * FROM teams;
 SELECT * FROM predictions
 	INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID 
     INNER JOIN users on users.userID = predictions.userID
-    WHERE checked = false AND fixtures.homeGoals IS NOT NULL;
+    WHERE fixtures.homeGoals IS NOT NULL;
 
 SELECT * FROM users
 	ORDER BY score DESC;
 
+DELETE FROM users 
+	WHERE userID = 32;
+
 UPDATE users
-	SET score = 0
+	SET userPassword = "admin"
 	WHERE userID = 4;

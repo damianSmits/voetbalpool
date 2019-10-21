@@ -82,7 +82,6 @@ computed: {
 methods: {
     hideAllScreens(){
         this.haveAdminRights=false;
-        //this.showPlayed=false;
         this.showMatchesForResult=false;
         this.predictMatches=false;
         this.showRegisterForm = false;
@@ -92,7 +91,7 @@ methods: {
     },
     async goToAdmin(){
         this.hideAllScreens();
-        if(localStorage.length != 0 && localStorage["username"] === "admin"){
+        if(localStorage.length != 0 && localStorage["username"] === "damian"){
             this.haveAdminRights= !this.haveAdminRights
         } else {
             alert("volgens mij ben jij helemaal geen admin")
@@ -127,7 +126,6 @@ methods: {
         return this.showLeaderboard; 
     },
     async addTeam(teamName){
-        console.log(teamName);
         let newTeam = {"teamName": teamName}
         await fetch('api/addTeam', {
             method: 'POST',
@@ -139,7 +137,6 @@ methods: {
         })
     },
     async addMatch(homeTeam, awayTeam, round, datum){
-        console.log(homeTeam + " " + awayTeam + " " + round + " " + datum);
         let newMatch = {
             "homeTeam": homeTeam,
             "awayTeam": awayTeam,
@@ -167,7 +164,6 @@ methods: {
         })
         let matches = await response.json();
         this.matches=matches;
-        console.log(matches);
         this.showMatchesForResult= true;
         return this.showMatchesForResult; 
     },
@@ -182,7 +178,6 @@ methods: {
         })
         playedMatches = await response.json();
         this.playedMatches=playedMatches;
-        console.log(playedMatches);
         this.showPlayedMatchespls();
 
     },
@@ -203,10 +198,8 @@ methods: {
             body: JSON.stringify(newMatchToGiveResult)
         })
         playedMatches = await response.json();
-        console.log(playedMatches);
     },
     async registerUser(userName, password, email){
-        console.log(userName + "" + password + "" + email);
         alert("welkom!")
         this.hideAllScreens();
         let newUser = {
@@ -238,10 +231,8 @@ methods: {
             body: JSON.stringify(newLogin) 
         })
         let userLoggingIn = await response.json()
-        console.log(userLoggingIn)
         if(userLoggingIn !== "NEE"){
             localStorage.setItem("username", userLoggingIn)
-            alert("Jeuu " + userLoggingIn);
             this.hideAllScreens();
             this.userName=userLoggingIn;
             location.reload();
@@ -259,7 +250,6 @@ methods: {
         })
         matchesToPredict = await response.json();
         this.matchesToPredict = matchesToPredict;
-        console.log(matchesToPredict);
     },
     async sendMatchPrediction(homeGoals, homeTeam, awayTeam, awayGoals){
         let newPrediction = {
@@ -279,7 +269,6 @@ methods: {
         })
     },
     async getMyPredictions(userName){
-        console.log(userName)
         let newMyPredictions = {"userName": userName};
         let response = await fetch('api/getMyPredictions/', {
             method: 'POST',
@@ -291,11 +280,9 @@ methods: {
         })
         myPredictions = await response.json();
         this.myPredictions = myPredictions;
-        console.log(myPredictions);
         this.goToMyPredictions();
     },
     async scorePredictions(){
-        console.log("scoring...")
         await fetch('api/scorePredictions/', {
             method: 'POST',
             headers: {
@@ -314,7 +301,6 @@ methods: {
         })
         users = await response.json()
         this.users = users;
-        console.log(users)
         this.goToLeaderboard()
     },
 },  

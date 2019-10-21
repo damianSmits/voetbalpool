@@ -31,9 +31,7 @@
             v-bind:user-name="userName">
             </links>
         
-        
-
-            <admin-screen 
+            <admin-screen class = "split right"
             v-if=haveAdminRights
             v-on:team-confirmed="addTeam"
             v-on:match-confirmed="addMatch"
@@ -42,37 +40,37 @@
             >
             </admin-screen>      
         
-            <matches-screen 
+            <matches-screen class = "split left"
                 v-if=showPlayed
                 v-bind:played-matches=playedMatches
                 >
             </matches-screen>
 
-            <fill-in-results-screen
+            <fill-in-results-screen class = "split resultsScreen"
                 v-if=showMatchesForResult
                 v-bind:matches=matches
                 v-on:give-results-to-matches="sendResults">
             </fill-in-results-screen>
         
-            <register-screen 
+            <register-screen class = "split right"
                 v-if=showRegisterForm
                 v-on:register-user="registerUser">
             </register-screen>
             
-            <predict-screen
+            <predict-screen class = "split right"
                 v-if=predictMatches
                 v-on:predict-matches="showMatchesToPredict"
                 v-bind:matches-to-predict="matchesToPredict"
                 v-on:send-prediction="sendMatchPrediction">
             </predict-screen>
 
-            <my-predictions-screen
+            <my-predictions-screen class = "split right"
                 v-if=showMyPredictions
                 v-bind:my-predictions="myPredictions"
                 v-on:show-my-predictions=getMyPredictions>
             </my-predictions-screen>
 
-            <leaderboard-screen
+            <leaderboard-screen class = "split right"
                 v-if=showLeaderboard
                 v-bind:users="users">
             </leaderboard-screen>

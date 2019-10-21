@@ -10,8 +10,8 @@ SET userName = "admin",
 SELECT * FROM users;
 
 UPDATE users
- SET userPassword = "piet"
- WHERE userID = 3;
+ SET score = 14
+ WHERE userName = "admin";
 
 DELETE FROM users
 WHERE userName = "Karel";

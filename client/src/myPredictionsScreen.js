@@ -9,13 +9,18 @@ export default {
     template: `
         <div>
             
-            </br></br>{{ errorMessage }}</br></br>
-            <li v-for="prediction in myPredictions">
-                    {{ prediction["round"] }}: <label>{{ prediction["homeTeam"] }}</label> 
+            <span class="myPredictionsHeader">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbspThuis team
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            Uit team</span></br>
+            <label v-for="prediction in myPredictions">
+                    <label class ="homeTeam">{{ prediction["homeTeam"] }}</label> 
                     {{ prediction["predictedHomeGoals"] }} -
                     {{ prediction["predictedAwayGoals"] }}
-                    <label>{{ prediction["awayTeam"] }}</label>
-                </li>
+                    <label class ="homeTeam">{{ prediction["awayTeam"] }}</label></br>
+                </label>
         </div>
             
     `,
