@@ -1,0 +1,55 @@
+body {
+    font-family: 'Lato', sans-serif;
+    padding: 0px;
+    margin: 0px;
+
+    --primary-color: #237aad;
+    --accent-color: rgb(44, 44, 44);
+    --light-text-color: rgb(44, 44, 44);
+    --link-color: #FFFFFF;
+    --button-color: rgb(44, 44, 44);
+}
+
+#mainHeader {
+    background-color: var(--primary-color);
+    font-size: 3rem;
+    color: white;
+    width:100%;
+}
+
+#linkHeader {
+    height: 2rem;
+    line-height: 2rem;
+    background-color: var(--accent-color);
+	width: 100%;
+    text-align: center;
+    top: 3.4em;
+}
+
+a:link{
+	color: white;
+	text-decoration: none;
+}
+
+a:visited{
+	color: white;
+	text-decoration: none;
+}
+a:hover{
+	color: white;
+	text-decoration: none;
+}
+a:active{
+	color: white;
+	text-decoration: none;
+}
+
+.headerButton {
+  background-color: var(--button-color);
+  border: none;
+  color: white;
+  text-align: center;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+}

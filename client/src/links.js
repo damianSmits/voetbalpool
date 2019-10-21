@@ -1,6 +1,6 @@
 export default {
     created(){
-        this.checkUser()
+        this.getPlayedMatches();
     },
     data() {
         return {
@@ -13,20 +13,26 @@ export default {
     },
     template: `
         <div>
-            <button v-on:click="adminRights" v-if=isAdmin>admin</button>    
-            <button v-on:click="getPlayedMatches">laat afgelopen potjes zien</button>  
-            <button v-on:click="showMatchesToPredict" v-if=!isNotLoggedIn>voorspel komende potjes</button>
-            <button v-on:click="showMyPredictions" v-if=!isNotLoggedIn>Mijn voorspellingen</button>
-            <button v-on:click="showLeaderboard" v-if=!isNotLoggedIn>leaderboard</button>
-            <button v-on:click="showRegisterUser" v-if=isNotLoggedIn>Registreer</button>
-            <input v-model="userName" align="" v-if=isNotLoggedIn></input><input v-model="password" type="password" v-if=isNotLoggedIn></input>
-            <button v-on:click="userLogin" v-if=isNotLoggedIn>Inloggen</button>  
-            <button v-on:click="userLogOff" v-if=!isNotLoggedIn>Uitloggen</button>
-            {{ loginName }} 
+        <header id="linkHeader">
+            <button class = "headerButton" v-on:click="adminRights" v-if=isAdmin>admin</button>    
+            <button class = "headerButton" v-on:click="showMatchesToPredict" v-if=!isNotLoggedIn>voorspel komende potjes</button>
+            <button class = "headerButton" v-on:click="showMyPredictions" v-if=!isNotLoggedIn>Mijn voorspellingen</button>
+            <button class = "headerButton" v-on:click="showLeaderboard" v-if=!isNotLoggedIn>leaderboard</button>
+            <button class = "headerButton" v-on:click="showRegisterUser" v-if=isNotLoggedIn>Registreer</button>
+            <button class = "headerButton" v-on:click="userLogOff" v-if=!isNotLoggedIn>Uitloggen</button>
+            
+            <input v-model="userName" placeholder="Gebruikersnaam" v-if=isNotLoggedIn></input>
+            
+            <input v-model="password" type="password" placeholder = "wachtwoord" v-if=isNotLoggedIn></input>
+            
+            <button class = "headerButton" v-on:click="userLogin" v-if=isNotLoggedIn>Inloggen</button>  
+            
+            <label v-if=!isNotLoggedIn><font color="white">Welkom, {{ loginName }}</font></label>
+            </header>
         </div>      
     `,
     computed: {
-        
+        //<button class = "headerButton" v-on:click="getPlayedMatches">laat afgelopen potjes zien</button>  
     },
     methods: {  
         checkUser(){

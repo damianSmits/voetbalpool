@@ -344,10 +344,14 @@ app.post("/api/scorePredictions", async function (request, response) {
             connection.query(sqlUpdate, async function (err, result) {
             if (err) throw err;
             }) 
+
+            let sqlCheck = "UPDATE predictions SET checked = TRUE WHERE fixtureID = '" + result[i]["fixtureID"] + "' AND userID = '" + result[i]["userID"] + "';";
+            connection.query(sqlCheck, async function (err, result) {
+            if (err) throw err;
+            
+            }) 
         }
     }) 
-    connection.end();
-    console.log("Disconnected!");
 })
 
 app.get("/api/getLeaderboard", async function (request, response) {

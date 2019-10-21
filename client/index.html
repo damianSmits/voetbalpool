@@ -6,13 +6,17 @@
 		
         <title>Foebelpooltje</title>
         <meta name="description" content="The foebel pool for the whole family">
+        <link rel="stylesheet" href="style/standard.css">
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
     </head>
-
-    <header id="mainheader" class="header">  
+    <header id="mainHeader" class="header">
+            <center>Voetbalpool</center>
+        </header>
+    <header id="mainHeader" class="header">  
     </header>
     <body>
+        
         
         <div id = "app">
             <links 
@@ -26,8 +30,10 @@
             v-on:user-login="userLogin"
             v-bind:user-name="userName">
             </links>
+        
+        
 
-            <admin-screen
+            <admin-screen 
             v-if=haveAdminRights
             v-on:team-confirmed="addTeam"
             v-on:match-confirmed="addMatch"
@@ -36,7 +42,7 @@
             >
             </admin-screen>      
         
-            <matches-screen
+            <matches-screen 
                 v-if=showPlayed
                 v-bind:played-matches=playedMatches
                 >
@@ -48,7 +54,7 @@
                 v-on:give-results-to-matches="sendResults">
             </fill-in-results-screen>
         
-            <register-screen
+            <register-screen 
                 v-if=showRegisterForm
                 v-on:register-user="registerUser">
             </register-screen>

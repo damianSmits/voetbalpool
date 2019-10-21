@@ -82,7 +82,7 @@ computed: {
 methods: {
     hideAllScreens(){
         this.haveAdminRights=false;
-        this.showPlayed=false;
+        //this.showPlayed=false;
         this.showMatchesForResult=false;
         this.predictMatches=false;
         this.showRegisterForm = false;
