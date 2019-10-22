@@ -1,6 +1,7 @@
 export default {
     created(){
         this.getPlayedMatches();
+        this.getEveryTeam();
     },
     data() {
         return {
@@ -22,7 +23,7 @@ export default {
             
 
             <input v-model="userName" placeholder="Gebruikersnaam" v-if=isNotLoggedIn></input>
-            <input id="passwordInput" v-model="password" type="password" placeholder = "wachtwoord" v-if=isNotLoggedIn></input>
+            <input id="passwordInput" v-model="password" type="password" placeholder = "Wachtwoord" v-if=isNotLoggedIn></input>
             <button id="loginButton" class = "headerButton"  v-on:click="userLogin" v-if=isNotLoggedIn>Inloggen</button> 
             <span v-if=isNotLoggedIn>||</span> 
 
@@ -71,7 +72,7 @@ export default {
         },
         showMatchesToPredict(){
             this.checkUser();
-            this.$emit('show-matches-to-predict'); 
+            this.$emit('show-matches-to-predict', this.loginName); 
         },
         userLogOff(){
             this.loginName = ""
@@ -96,6 +97,9 @@ export default {
             this.checkUser();
             this.$emit('user-login', this.userName, this.password)
             this.checkUser();
-        }
+        },
+        getEveryTeam(){
+            this.$emit('get-every-team')
+        }   
     }
 }

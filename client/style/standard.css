@@ -10,6 +10,12 @@ body {
     --button-color: rgb(44, 44, 44);
 }
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
 #mainHeader {
     background-color: var(--primary-color);
     font-size: 3rem;
@@ -103,6 +109,15 @@ a:active{
     text-align: left;
 }
 
+.fillInResultsHeader{
+    color: white;
+    padding: 10px;
+    background-color: var(--primary-color);
+    display: inline-block;
+    width:647px;
+    text-align: left;
+}
+
 .score{
     color: white;
     padding: 10px;
@@ -151,8 +166,5 @@ button[disabled]{
 }
 
 .resultsScreen{
-    width: 30%;
-    right: 0;
-    top:120px;
-    left:1100px;
+    
 }

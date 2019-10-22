@@ -11,17 +11,28 @@ INSERT INTO predictions
         
 DELETE FROM users
     WHERE userName = "";
+    
+DELETE FROM predictions
+	WHERE fixtureID = 61;
 
 DELETE FROM fixtures
-	WHERE fixtureID = 56;
+	WHERE fixtureID = 61;
 
 DELETE FROM teams
-	WHERE teamName = "Henkie";
+	WHERE teamName = "Harry";
 
 SELECT * FROM fixtures;    
 SELECT * FROM users;
 SELECT * FROM predictions;
 SELECT * FROM teams;
+
+SELECT * FROM fixtures WHERE homeGoals IS NULL AND fixtureID NOT IN (SELECT fixtureID FROM predictions) 
+AND '12' NOT IN (SELECT userID FROM predictions);
+   
+SELECT * FROM fixtures 
+	WHERE fixtureID NOT IN (SELECT fixtureID FROM predictions WHERE userID = '12')
+    AND homeGoals IS NULL;
+
 
 SELECT * FROM predictions
 	INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID 

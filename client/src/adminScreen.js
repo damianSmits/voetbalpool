@@ -1,8 +1,13 @@
 export default {
-    props: [ 'matches' ],
+    created(){
+        this.getTeams()
+    },
+    props: { matches:"matches", 
+             teams: "teams", 
+             rounds: "rounds"},
     data() {
         return {
-            teamName: undefined,
+            teamNamer: undefined,
             homeTeam:"",
             awayTeam:"",
             awayGoals:"",
@@ -14,6 +19,9 @@ export default {
             confirmedMatchMessage: "",
             datum:"",
             confirmedScoreMessage: "",
+            team:"",
+            round:"",
+            tournamentName:"",
         }
     },
     
@@ -21,30 +29,43 @@ export default {
         <div>
             </br> {{ errorMessage }} </br>
             Voeg Team toe
-            </br><input placeholder = 'naam' v-model="teamName"/>
-                {{ confirmedTeamMessage }}
-           
-            </br><button class = "regularButton" v-on:click="confirmTeam" on:click="color:powderblue;">Stort</button>
+            </br><input placeholder = 'naam' v-model="teamNamer"/></br>
+            <button class = "regularButton" v-on:click="confirmTeam">Stort</button>
+            {{ confirmedTeamMessage }}
             </br>
             </br></br>
-
-            Kan ook wel wedstrijd toevoegen als je wilt
-            </br><input placeholder = 'Thuisteam' v-model="homeTeam"/>
-            </br><input placeholder = 'Uitteam' v-model="awayTeam"/>
-            </br><input placeholder = 'Speelronde' v-model="round"/>
-            </br><input placeholder = 'yyyymmdd' v-model="datum" />
+            Kan ook wel wedstrijd toevoegen als je wilt</br>
+            <select style="width: 180px">
+                <option v-for="team in teams">{{ team["teamName"] }}</option>
+            </select></br>
+            <select style="width: 180px">
+                <option v-for="team in teams">{{ team["teamName"] }}</option>
+            </select>
+            </br><input placeholder = 'Speelronde' v-model="round" style="width: 176px"/>
+            </br><input type="date" value="2019-01-01" v-model="datum" style="width: 175px"/>
 
             </br><button class = "regularButton" v-on:click="confirmMatch">Stort</button>
-            {{ confirmedMatchMessage }}
+            </br>{{ confirmedMatchMessage }}
             
             </br></br>
 
             Of missschien uitslagen invullen van speelronde:
-            </br><input placeholder = 'round' v-model="roundThatHasBeen" min = 0 step =1/>
+            </br><select style="width: 180px">
+                <option v-for="round in rounds">{{ round["roundName"] }}</option>
+            </select>
             </br><button class = "regularButton" v-on:click="showMatches">Laat zien dan</button>
             
+            </br></br></br>
+            
+            Creëer eigen toernooi:</br>
+            <input placeHolder = toernooinaam v:model="tournamentName"></input></br>
+            <form>
+               Hoeveel Teams: <input type="radio" name="gender" value="male" v:model="amountOfTeams" checked>16<br>
+            </form>
+            Meer keuzes/opties onderweg
+            </br><button class = "regularButton" v-on:click="addTournament">Stort</button>
+            
             </br></br>
-
             Laatste optie: geef punten aan spelers
             </br><button class = "regularButton" v-on:click="giveScore">score</button></br>
             {{ confirmedScoreMessage }}
@@ -52,22 +73,25 @@ export default {
     `,
     methods: {
         confirmTeam() {
-            if (!this.teamName) {
+            console.log(this.teams)
+            if (!this.teamNamer) {
                 this.errorMessage = "wel team naam toevoegen";
                 return;
             }
-            this.confirmedTeamMessage = this.teamName + " Toegevoegd!";
+            this.confirmedTeamMessage = this.teamNamer + " Toegevoegd!";
             this.errorMessage = "";
-            this.$emit('team-confirmed', this.teamName);                 
+            this.$emit('team-confirmed', this.teamNamer);                 
         },
         confirmMatch() {
-            if (!this.homeTeam || !this.awayTeam) {
-                this.errorMessage = "wel team naam toevoegen";
+            console.log(event.target.parentNode.children[10].value)
+            console.log(event.target.parentNode.children[12].value)
+            if (event.target.parentNode.children[10].value == event.target.parentNode.children[12].value) {
+                alert("Thuis- en uitteam zijn hetzelfde");
                 return;
             }
-            this.confirmedMatchMessage = this.homeTeam + " - " + this.awayTeam + " toegevoegd!"
+            this.confirmedMatchMessage = event.target.parentNode.children[10].value + " - " + event.target.parentNode.children[12].value + " toegevoegd!"
             this.errorMessage = "";
-            this.$emit('match-confirmed', this.homeTeam, this.awayTeam, this.round, this.datum);                 
+            this.$emit('match-confirmed', event.target.parentNode.children[10].value, event.target.parentNode.children[12].value, this.round, this.datum);                 
         },
         showMatches() {
             if (!this.roundThatHasBeen) {
@@ -81,7 +105,10 @@ export default {
             event.target.disabled="true";
             this.confirmedScoreMessage = "Score geteld!";
             this.$emit('give-score')
-        }
+        },
+        getTeams(){
+            this.teams = teams;
+            this.rounds = rounds;
+        },
     }
-
 }

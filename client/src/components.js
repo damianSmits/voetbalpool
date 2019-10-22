@@ -74,6 +74,7 @@ data: {
     isAdmin: false,
     userName:"",
     showLeaderboard: false,
+    loginName: "",
 },
 
 computed: {
@@ -109,8 +110,8 @@ methods: {
         this.showPlayed= !this.showPlayed;
         return this.showPlayed; 
     },
-    async goToPredictMatches(){
-        this.showMatchesToPredict();
+    async goToPredictMatches(loginName){
+        this.showMatchesToPredict(loginName);
         this.hideAllScreens();
         this.predictMatches= !this.predictMatches;
         return this.predictMatches; 
@@ -153,6 +154,7 @@ methods: {
         })
     },
     async getMatchesToGiveResult(roundThatHasBeen){
+        this.hideAllScreens();
         let newRoundThatHasBeen= {"round": roundThatHasBeen}
         let response = await fetch('api/showMatch/', {
             method: 'POST',
@@ -240,13 +242,17 @@ methods: {
         alert("flauwekul ingevuld")
         }
     },
-    async showMatchesToPredict(){
+    async showMatchesToPredict(userName){
+        let newUserToGetPredictions= {
+            "userName": userName,
+        }
         let response = await fetch('api/getMatchesToPredict/', {
-            method: 'GET',
+            method: 'POST',
             headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
             },
+            body: JSON.stringify(newUserToGetPredictions)
         })
         matchesToPredict = await response.json();
         this.matchesToPredict = matchesToPredict;
@@ -303,5 +309,34 @@ methods: {
         this.users = users;
         this.goToLeaderboard()
     },
+    async getEveryTeam(){
+        response = await fetch('api/getEveryTeam/', {
+            method: 'GET',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        })
+        teams = await response.json()
+        this.teams = teams;
+        console.log(teams)
+        this.getEveryRound();
+
+    },
+    async getEveryRound(){
+        response = await fetch('api/getEveryRound/', {
+            method: 'GET',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        })
+        rounds = await response.json()
+        this.rounds = rounds;
+        console.log(rounds)
+
+    },
 },  
 })            
+
+

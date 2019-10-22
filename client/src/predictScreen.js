@@ -14,7 +14,7 @@ export default {
     
     template: `
         <div>
-            </br></br>{{ errorMessage }}</br></br>
+            </br></br>{{ errorMessage }}{{ goedzo }}</br></br>
             <span class = "predictionHeader">R: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
             Thuis team 
             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
@@ -22,14 +22,14 @@ export default {
             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
             &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Uit Team
                     </span></br>
+                    <label v-if="matchesToPredict.length==0">Geen resultaten gevonden.</label>
             <label v-for="(match, index) in matchesToPredict">
                     {{ match["round"] }}: <span class = "homeTeam">{{ match["homeTeam"] }}</span> 
-                    <input min = 0 step =1 size="1"> -
-                    <input min = 0 step =1 size="1"> 
+                    <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> -
+                    <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> 
                     <span class = "homeTeam">{{ match["awayTeam"] }}</span>&nbsp;&nbsp;
                     <button class = "regularButton" v-on:click="sendPrediction">voorspel!</button></br> 
                 </label>
-                {{ goedzo }}
         </div>
             
     `,

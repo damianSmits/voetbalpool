@@ -218,9 +218,8 @@ app.post("/api/userLogin", async function (request, response) {
 });
 
  
-app.get("/api/getMatchesToPredict/", function (request, response) {
+app.post("/api/getMatchesToPredict/", function (request, response) {
     console.log("Api call received for /getMatchesToPredict");
-
     var connection = mysql.createConnection({
         host: "localhost",
         user: "henk",
@@ -232,7 +231,9 @@ app.get("/api/getMatchesToPredict/", function (request, response) {
         if (err) throw err;
         console.log("Connected!");
     });
-    let sql = "SELECT * FROM fixtures WHERE homeGoals IS NULL";
+    let sql = "SELECT * FROM fixtures " +
+	    "WHERE fixtureID NOT IN (SELECT fixtureID FROM predictions WHERE userID = (SELECT userID FROM users WHERE userName = '" + request.body["userName"] + "')) " +
+        "AND homeGoals IS NULL;";
     
     connection.query(sql, function (err, result) {
         let matchesToPredict = [];
@@ -384,4 +385,68 @@ app.get("/api/getLeaderboard", async function (request, response) {
     }) 
     connection.end();
     console.log("Disconnected!");
+})
+
+app.get("/api/getEveryTeam", async function (request, response) {
+    console.log("Api call received for /getEveryTeam");
+    
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });    
+
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+
+        let sql = "SELECT * FROM teams";
+
+    connection.query(sql, async function (err, result) {
+        let teams = [];
+        if (err) throw err;
+        for (let i=0; i<result.length; i++){
+            teams.push(
+                {
+                teamName: result[i]["teamName"],
+            })
+        }response.json(teams);
+    }) 
+
+    connection.end();
+    console.log("Disconnected!");
+    });
+})
+
+app.get("/api/getEveryRound", async function (request, response) {
+    console.log("Api call received for /getEveryRound");
+    
+    var connection = mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });    
+
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+
+        let sql = "SELECT DISTINCT(round) AS round FROM fixtures ORDER BY round ASC;";
+
+    connection.query(sql, async function (err, result) {
+        let rounds = [];
+        if (err) throw err;
+        for (let i=0; i<result.length; i++){
+            rounds.push(
+                {
+                roundName: result[i]["round"],
+            })
+        }response.json(rounds);
+    }) 
+
+    connection.end();
+    console.log("Disconnected!");
+    });
 })

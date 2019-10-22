@@ -13,14 +13,22 @@ export default {
     
     template: `
         <div>
-                <li v-for="match in matches">
-                    <label>{{ match["round"] }}</label>:
-                    <label>{{ match["homeTeam"] }}</label> 
+            <span class = "fillInResultsHeader">R: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            Thuis team 
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Uit Team
+            </span></br>
+
+                <label v-for="match in matches">
+                    <label class="round">{{ match["round"] }}</label>:
+                    <label class="homeTeam">{{ match["homeTeam"] }}</label> 
                     <input min = 0 step =1 size="1"> -
                     <input min = 0 step =1 size="1"> 
-                    <label>{{ match["awayTeam"] }}</label>&nbsp;&nbsp;
-                    <button class = "regularButton" v-on:click="sendMatchResults">Stort</button> 
-                </li>
+                    <label class="homeTeam">{{ match["awayTeam"] }}</label>&nbsp;&nbsp;
+                    <button class = "regularButton" v-on:click="sendMatchResults">Stort</button></br> 
+                </label>
                 
                 {{ confirmedResultMessage }}
         </div>
