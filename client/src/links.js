@@ -14,6 +14,12 @@ export default {
     },
     template: `
         <div>
+            <input id="usernameInput" v-model="userName" placeholder="Gebruikersnaam" v-if=isNotLoggedIn></input>
+            <input id="passwordInput" v-model="password" type="password" placeholder = "Wachtwoord" v-if=isNotLoggedIn></input>
+            <button id="loginButton" class = "headerButton"  v-on:click="userLogin" v-if=isNotLoggedIn>Inloggen</button> 
+            
+            <button id="loginButton" class = "headerButton" v-on:click="userLogOff" v-if=!isNotLoggedIn>Uitloggen</button>
+            
         <header id="linkHeader">
 
             <button class = "headerButton" v-on:click="adminRights" v-if=isAdmin>Admin</button>    
@@ -21,17 +27,10 @@ export default {
             <button class = "headerButton" v-on:click="showMyPredictions" v-if=!isNotLoggedIn>Mijn voorspellingen</button>
             <button class = "headerButton" v-on:click="showLeaderboard" v-if=!isNotLoggedIn>Leaderboard</button>
             
-
-            <input v-model="userName" placeholder="Gebruikersnaam" v-if=isNotLoggedIn></input>
-            <input id="passwordInput" v-model="password" type="password" placeholder = "Wachtwoord" v-if=isNotLoggedIn></input>
-            <button id="loginButton" class = "headerButton"  v-on:click="userLogin" v-if=isNotLoggedIn>Inloggen</button> 
-            <span v-if=isNotLoggedIn>||</span> 
-
-
-
-            <button class = "headerButton" v-on:click="showRegisterUser" v-if=isNotLoggedIn>Registreer</button>
-            <button class = "headerButton" v-on:click="userLogOff" v-if=!isNotLoggedIn>Uitloggen</button>
-            <label v-if=!isNotLoggedIn><font color="white">Welkom, {{ loginName }}</font></label>
+            <button id="loginButton" class = "headerButton" v-on:click="showRegisterUser" v-if=isNotLoggedIn style="float:right">Registreer</button>
+            
+            
+            <label id="welcomeUser" v-if=!isNotLoggedIn><font color="white">Welkom, {{ loginName }}</font></label>
             </header>
         </div>      
     `,

@@ -27,10 +27,37 @@ input[type=number]::-webkit-outer-spin-button {
     height: 2rem;
     line-height: 2rem;
     background-color: var(--accent-color);
-	width: 100%;
+	  width: 100%;
     text-align: center;
     top: 3.4em;
     color:white;
+}
+
+#linkButton{
+  margin-right:100px;
+}
+
+#loginButton{
+    float: right; 
+    margin-right:20px;
+}
+
+#passwordInput{
+    float: right;
+    margin-top:-25px; 
+    margin-right:10px; 
+}
+
+#usernameInput{
+    float: right;
+    margin-top:-50px;
+    margin-right:10px;
+}
+
+#welcomeUser{
+    float: right;
+    margin-top:-50px;
+    margin-right:-80px
 }
 
 a:link{
