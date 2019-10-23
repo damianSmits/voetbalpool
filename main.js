@@ -1,8 +1,11 @@
 const express = require('express');
 const optellert = require('./optellert')
+const linksQueries = require('./linksQueries')
+const adminQueries = require('./adminQueries')
+const predictQueries = require('./predictQueries')
 const app = express();
 
-var mysql = require('mysql2');
+var mysql = require('mysql2/promise');
 
 app.use(express.static('client'));
 
@@ -10,443 +13,120 @@ app.use(express.json());
 
 app.listen(1234, () => console.log('Example app listening on port 1234!'));
 
-app.post("/api/addTeam", function (request, response) {
+var connection;
+
+async function makeNewConnection(){
+        connection = await mysql.createConnection({
+        host: "localhost",
+        user: "henk",
+        password: "henk",
+        database: "foebelpool"
+    });    
+
+    connection.connect(function (err, result) {
+        if (err) throw err;
+        console.log("Connected!");
+    });
+}
+
+app.post("/api/addTeam", async function (request, response) {
     console.log("Api call received for /addTeam");
-
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    console.log(request.body);
-    let sql = "INSERT IGNORE INTO teams SET teamName = '" + request.body["teamName"] + "';";
-    
-    connection.query(sql, function (err, result) {
-        if (err) throw err;
-        })
-
-    connection.end();
-    console.log("Disconnected!");
+    await makeNewConnection();
+    adminQueries.addTeam(connection, request);
+    await connection.end();
 });
 
-app.post("/api/addMatch", function (request, response) {
+app.post("/api/addMatch", async function (request, response) {
     console.log("Api call received for /addMatch");
-
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    console.log(request.body);
-    let sql = "INSERT INTO fixtures SET homeTeam = '" + request.body["homeTeam"] + "', awayTeam = '" + request.body["awayTeam"] + "', round = '" + request.body["round"] + "', datum = '" + request.body["datum"] + "';";
-    
-    connection.query(sql, function (err, result) {
-        if (err) throw err;
-        })
-
-    connection.end();
-    console.log("Disconnected!");
+    await makeNewConnection();
+    adminQueries.addMatch(connection, request);
+    await connection.end();
 });
 
-app.post("/api/showMatch/", function (request, response) {
+app.post("/api/showMatch/", async function (request, response) {
     console.log("Api call received for /showmatch");
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    let sql = "SELECT * FROM fixtures WHERE round = '" + request.body["round"] + "' AND homeGoals IS NULL;";
-    
-    connection.query(sql, function (err, result) {
-        let matches = [];
-        if (err) throw err;
-        for (let i = 0; i < result.length; i++) {
-            matches.push(
-                {
-                    homeTeam: result[i]["homeTeam"],
-                    awayTeam: result[i]["awayTeam"],
-                    round: result[i]["round"]
-                    
-                })
-            }
-            console.log(matches);
-            response.json(matches);
-        }) 
-    connection.end();
-    console.log("Disconnected!");
-    
+    await makeNewConnection()
+    response.json(await adminQueries.getMatchesToGiveResult(connection, request));
+    await connection.end();
 });
-   
 
-
-app.get("/api/getPlayed/", function (request, response) {
+app.get("/api/getPlayed/", async function (request, response) {
     console.log("Api call received for /getPlayed");
-
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    let sql = "SELECT * FROM fixtures WHERE homeGoals IS NOT NULL AND datum BETWEEN date_sub(now(),INTERVAL 1 WEEK) AND now()";
-    
-    connection.query(sql, function (err, result) {
-        let playedMatches = [];
-        if (err) throw err;
-        for (let i = 0; i < result.length; i++) {
-            playedMatches.push(
-                {
-                    homeTeam: result[i]["homeTeam"],
-                    awayTeam: result[i]["awayTeam"],
-                    homeGoals: result[i]["homeGoals"],
-                    awayGoals: result[i]["awayGoals"],
-                    datum: result[i]["datum"]
-                })
-            }
-            response.json(playedMatches);
-        })
-    connection.end();
+    await makeNewConnection()
+    response.json(await linksQueries.getPlayedMatches(connection))
+    await connection.end();
     console.log("Disconnected!");
 });
 
-app.post("/api/sendResults", function (request, response) {
+app.post("/api/sendResults", async function (request, response) {
     console.log("Api call received for /sendResult");
-
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    console.log(request.body);
-    let sql = "UPDATE fixtures SET homeGoals = '" + request.body["homeGoals"] + "', awayGoals = '" + request.body["awayGoals"] + "' WHERE homeTeam = '" + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "' AND  round = '" + request.body["round"] + "';";
-    
-    connection.query(sql, function (err, result) {
-        if (err) throw err;
-        })
-
-    connection.end();
-    console.log("Disconnected!");
+    await makeNewConnection()
+    await adminQueries.setResult(connection, request)
+    await connection.end();
 });
 
-app.post("/api/registerUser", function (request, response) {
-    console.log("Api call received for /registerUser");
-
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    console.log(request.body);
-    let sql = "INSERT IGNORE INTO users SET userName = '" + request.body["userName"] + "', userPassword = '" + request.body["password"] + "', email = '" + request.body["email"] + "', score = 0;";
-    
-    connection.query(sql, function (err, result) {
-        if (err) throw err;
-        })
-
-    connection.end();
-    console.log("Disconnected!");
+app.post("/api/registerUser", async function (request, response) {
+    console.log("api call received for /registerUser")
+    await makeNewConnection();
+    await linksQueries.registerUser(connection, request)
+    await connection.end();
 });
 
 app.post("/api/userLogin", async function (request, response) {
-    
     console.log("Api call received for /userLogin");
-    
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    
-    let sql = "SELECT * FROM users WHERE userName = '" + request.body["userName"] + "' AND userPassword = '" + request.body["password"] + "';";
-    await connection.query(sql, function (err, result) {
-        if (err) throw err;
-        if (result.length != 0){
-            let userLoggingIn = result[0]["userName"];
-            console.log(userLoggingIn);
-            console.log(result);
-            response.json(userLoggingIn);
-        }
-        else {
-            let userLoggingIn = "NEE"
-            response.json(userLoggingIn)
-        }
-    }) 
-    connection.end();
-    console.log("Disconnected!");
-
+    await makeNewConnection()
+    response.json(await linksQueries.userLogin(connection, request))
+    await connection.end();
 });
 
- 
-app.post("/api/getMatchesToPredict/", function (request, response) {
+app.post("/api/getMatchesToPredict/", async function (request, response) {
     console.log("Api call received for /getMatchesToPredict");
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    let sql = "SELECT * FROM fixtures " +
-	    "WHERE fixtureID NOT IN (SELECT fixtureID FROM predictions WHERE userID = (SELECT userID FROM users WHERE userName = '" + request.body["userName"] + "')) " +
-        "AND homeGoals IS NULL;";
-    
-    connection.query(sql, function (err, result) {
-        let matchesToPredict = [];
-        if (err) throw err;
-        
-        for (let i = 0; i < result.length; i++) {
-            matchesToPredict.push(
-                {
-                    homeTeam: result[i]["homeTeam"],
-                    awayTeam: result[i]["awayTeam"],
-                    round: result[i]["round"],
-                })
-            }response.json(matchesToPredict);
-        }) 
-    connection.end();
-    console.log("Disconnected!");
+    await makeNewConnection()
+    response.json(await predictQueries.getMatchesToPredict(connection, request))
+    await connection.end();
 });   
 
 app.post("/api/sendMatchPrediction", async function (request, response) {
     console.log("Api call received for /userLogin");
-    
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    
-    let sql = "INSERT INTO predictions SET userID = (SELECT userID FROM users WHERE userName = '" 
-    + request.body["userName"] + "'), fixtureID = (SELECT fixtureID FROM fixtures WHERE homeTeam = '" 
-    + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "'), predictedHomeGoals = '"
-    + request.body["homeGoals"] + "', predictedAwayGoals = '" + request.body["awayGoals"] + "';";
-
-    connection.query(sql, async function (err, result) {
-        if (err) throw err;
-    }) 
-    connection.end();
-    console.log("Disconnected!");
+    await makeNewConnection()
+    predictQueries.sendPrediction(connection, request);
+    await connection.end();
 })
 
-
-
-app.post("/api/getMyPredictions/", function (request, response) {
+app.post("/api/getMyPredictions/", async function (request, response) {
     console.log("Api call received for /getMyPredictions");
-    console.log(request.body["homeTeam"])
-    
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID WHERE checked = FALSE AND userID = (SELECT userID from users WHERE userName = '" + request.body["userName"] + "');";
-    
-    connection.query(sql, function (err, result) {
-        let myPredictedMatches = [];
-        if (err) throw err;
-        for (let i = 0; i < result.length; i++) {
-            myPredictedMatches.push(
-                {
-                    homeTeam: result[i]["homeTeam"],
-                    awayTeam: result[i]["awayTeam"],
-                    predictedAwayGoals: result[i]["predictedAwayGoals"],
-                    predictedHomeGoals: result[i]["predictedHomeGoals"],
-                    round: result[i]["round"]
-                })
-            }
-            response.json(myPredictedMatches);
-            
-            console.log(myPredictedMatches);
-        }) 
-    connection.end();
+    await makeNewConnection()
+    response.json(await predictQueries.getMyPredictions(connection, request));
+    await connection.end();
     console.log("Disconnected!"); 
 });
 
 app.post("/api/scorePredictions", async function (request, response) {
     console.log("Api call received for /scorePredictions");
-    
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    
-    let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID INNER JOIN users on users.userID = predictions.userID WHERE checked = false AND fixtures.homeGoals IS NOT NULL";
-
-    connection.query(sql, async function (err, result) {
-        if (err) throw err;
-        for (let i=0; i<result.length; i++){
-            
-            let sqlUpdate = "update users SET score = score + '"+ optellert.getScore(result[i]["homeGoals"], result[i]["awayGoals"], result[i]["predictedHomeGoals"], result[i]["predictedAwayGoals"], result[i]["userID"]) +"' WHERE userID = '" + result[i]["userID"] +"';";
-
-            connection.query(sqlUpdate, async function (err, result) {
-            if (err) throw err;
-            }) 
-
-            let sqlCheck = "UPDATE predictions SET checked = TRUE WHERE fixtureID = '" + result[i]["fixtureID"] + "' AND userID = '" + result[i]["userID"] + "';";
-            connection.query(sqlCheck, async function (err, result) {
-            if (err) throw err;
-            
-            }) 
-        }
-    }) 
+    await makeNewConnection()
+    adminQueries.scorePredictions(connection, request)
+    await connection.end();
 })
 
 app.get("/api/getLeaderboard", async function (request, response) {
     console.log("Api call received for /getLeaderboard");
-    
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });
-    
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-    });
-    
-    let sql = "SELECT * FROM users WHERE userName <>'damian' ORDER BY score DESC;";
-
-    connection.query(sql, async function (err, result) {
-        let users = [];
-        if (err) throw err;
-        for (let i=0; i<result.length; i++){
-            users.push(
-                {
-                userName: result[i]["userName"],
-                score: result[i]["score"]
-            })
-        }response.json(users);
-    }) 
-    connection.end();
-    console.log("Disconnected!");
+    await makeNewConnection()
+    response.json(await linksQueries.getLeaderboard(connection))
+    await connection.end();
 })
 
 app.get("/api/getEveryTeam", async function (request, response) {
     console.log("Api call received for /getEveryTeam");
-    
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });    
-
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-
-        let sql = "SELECT * FROM teams";
-
-    connection.query(sql, async function (err, result) {
-        let teams = [];
-        if (err) throw err;
-        for (let i=0; i<result.length; i++){
-            teams.push(
-                {
-                teamName: result[i]["teamName"],
-            })
-        }response.json(teams);
-    }) 
-
-    connection.end();
+    await makeNewConnection()
+    response.json(await linksQueries.getEveryTeam(connection));
+    await connection.end();
     console.log("Disconnected!");
     });
-})
+
 
 app.get("/api/getEveryRound", async function (request, response) {
     console.log("Api call received for /getEveryRound");
-    
-    var connection = mysql.createConnection({
-        host: "localhost",
-        user: "henk",
-        password: "henk",
-        database: "foebelpool"
-    });    
-
-    connection.connect(function (err, result) {
-        if (err) throw err;
-        console.log("Connected!");
-
-        let sql = "SELECT DISTINCT(round) AS round FROM fixtures ORDER BY round ASC;";
-
-    connection.query(sql, async function (err, result) {
-        let rounds = [];
-        if (err) throw err;
-        for (let i=0; i<result.length; i++){
-            rounds.push(
-                {
-                roundName: result[i]["round"],
-            })
-        }response.json(rounds);
-    }) 
-
-    connection.end();
-    console.log("Disconnected!");
+    await makeNewConnection()
+    response.json(await linksQueries.getEveryRound(connection));
+    await connection.end();
     });
-})

@@ -57,14 +57,6 @@ export default {
             
             </br></br></br>
             
-            Creëer eigen toernooi:</br>
-            <input placeHolder = toernooinaam v:model="tournamentName"></input></br>
-            <form>
-               Hoeveel Teams: <input type="radio" name="gender" value="male" v:model="amountOfTeams" checked>16<br>
-            </form>
-            Meer keuzes/opties onderweg
-            </br><button class = "regularButton" v-on:click="addTournament">Stort</button>
-            
             </br></br>
             Laatste optie: geef punten aan spelers
             </br><button class = "regularButton" v-on:click="giveScore">score</button></br>
@@ -94,11 +86,7 @@ export default {
             this.$emit('match-confirmed', event.target.parentNode.children[10].value, event.target.parentNode.children[12].value, this.round, this.datum);                 
         },
         showMatches() {
-            if (!this.roundThatHasBeen) {
-                this.errorMessage = "wel speelronde toevoegen";
-                return;
-            }
-            this.errorMessage = "";
+            this.roundThatHasBeen = event.target.parentNode.children[23].value
             this.$emit('show-matches', this.roundThatHasBeen);
         },
         giveScore(){
