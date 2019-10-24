@@ -9,9 +9,12 @@ SET userName = "admin",
     
 SELECT * FROM users;
 
+DELETE FROM users 
+	WHERE userID > 41;
+
 UPDATE users
  SET score = 14
  WHERE userName = "admin";
 
 DELETE FROM users
-WHERE userName = "Karel";
+WHERE userID = "43";

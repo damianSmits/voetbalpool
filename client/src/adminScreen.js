@@ -29,8 +29,8 @@ export default {
         <div>
             </br> {{ errorMessage }} </br>
             Voeg Team toe
-            </br><input placeholder = 'naam' v-model="teamNamer"/></br>
-            <button class = "regularButton" v-on:click="confirmTeam">Stort</button>
+            </br><input placeholder = 'naam' v-model="teamNamer"/>
+            </br><button class = "regularButton" v-on:click="confirmTeam">Stort</button>
             {{ confirmedTeamMessage }}
             </br>
             </br></br>
@@ -56,6 +56,8 @@ export default {
             </br><button class = "regularButton" v-on:click="showMatches">Laat zien dan</button>
             
             </br></br></br>
+            Nieuw toernooi maken kan ook:
+            </br><button class = "regularButton" v-on:click="goToTournament">Maak toernooi</button>
             
             </br></br>
             Laatste optie: geef punten aan spelers
@@ -86,17 +88,20 @@ export default {
             this.$emit('match-confirmed', event.target.parentNode.children[10].value, event.target.parentNode.children[12].value, this.round, this.datum);                 
         },
         showMatches() {
-            this.roundThatHasBeen = event.target.parentNode.children[23].value
+            this.roundThatHasBeen = event.target.parentNode.children[23].value;
             this.$emit('show-matches', this.roundThatHasBeen);
         },
         giveScore(){
             event.target.disabled="true";
             this.confirmedScoreMessage = "Score geteld!";
-            this.$emit('give-score')
+            this.$emit('give-score');
         },
         getTeams(){
             this.teams = teams;
             this.rounds = rounds;
+        },
+        goToTournament(){
+            this.$emit('go-to-tournaments');
         },
     }
 }

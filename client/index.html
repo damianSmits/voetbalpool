@@ -38,6 +38,7 @@
             v-on:match-confirmed="addMatch"
             v-on:show-matches="getMatchesToGiveResult"
             v-on:give-score="scorePredictions"
+            v-on:go-to-tournaments="goToTournaments"
             >
             </admin-screen>      
         
@@ -46,6 +47,11 @@
                 v-bind:played-matches=playedMatches
                 >
             </matches-screen>
+
+            <tournament-screen class = "split right"
+                v-if=showTournamentScreen
+                v-on:send-tournament-data="sendTournamentData">
+            </tournament-screen>
 
             <fill-in-results-screen class = "split resultsScreen"
                 v-if=showMatchesForResult

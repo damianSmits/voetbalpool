@@ -6,7 +6,7 @@ INSERT INTO teams (teamName, poule) VALUES (
 SELECT * FROM teams;
 
 DELETE FROM teams 
-WHERE teamName = "Karel";
+WHERE teamName = "yy";
 
 
 
@@ -17,7 +17,7 @@ INSERT INTO fixtures (homeTeam, awayTeam, round) VALUES(
 );
 
 DELETE FROM fixtures
-WHERE homeTeam = "Fred";
+WHERE fixtureID > 66;
 
 SELECT * FROM fixtures;
 

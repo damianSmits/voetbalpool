@@ -121,7 +121,7 @@ app.get("/api/getEveryTeam", async function (request, response) {
     response.json(await linksQueries.getEveryTeam(connection));
     await connection.end();
     console.log("Disconnected!");
-    });
+});
 
 
 app.get("/api/getEveryRound", async function (request, response) {
@@ -129,4 +129,13 @@ app.get("/api/getEveryRound", async function (request, response) {
     await makeNewConnection()
     response.json(await linksQueries.getEveryRound(connection));
     await connection.end();
-    });
+});
+
+
+app.post("/api/sendTournamentData", async function (request, response) {
+    console.log("Api call received for /sendTournamentData");
+    console.log(request.body)
+    await makeNewConnection()
+    await adminQueries.sendTournamentData(connection, request);
+    await connection.end();
+});

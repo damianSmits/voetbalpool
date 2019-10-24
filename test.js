@@ -13,7 +13,7 @@ test('actual winner and predicted winner should be the same when actual result i
     t.is(optellert.determineWinner(0,3), optellert.determineWinner(2,4))
 })
 
-test('should get 0 points when predicted winner is wrong, as well as all the goal amounts', t=> {
+test('Players should get 1 point per goal amount, 3 points for correct winner', t=> {
     t.is(optellert.determinePredictionScore(3,0,0,1, false), 0)
     t.is(optellert.determinePredictionScore(3,0,0,0, false), 1)
     t.is(optellert.determinePredictionScore(3,0,2,1, true), 3)

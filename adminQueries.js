@@ -75,6 +75,19 @@ let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID =
     })
 }
 
+async function sendTournamentData(connection, request){
+    let sql = "INSERT INTO tournaments SET tournamentName = '" + request.body["tournamentNamer"] + "', amountOfTeams = '" + request.body["amountOfTeams"] + "', teamsPerPoule = '" + request.body["amountOfTeamsInGroup"] + "';";
+    connection.query(sql, async function (err, result) {
+    })
+
+    for (let i = 0; i<request.body["teams"].length; i++){
+        let sqlapp = "INSERT INTO tournamentTeams SET tournamentID = (SELECT tournamentID FROM tournaments WHERE tournamentName = '" + request.body["tournamentNamer"] + "'), teamName = '" + request.body["teams"][i] + "', poule = 1 + " + i + "%" + request.body["amountOfTeamsInGroup"] + ";";
+        connection.query(sqlapp, async function (err, result) {
+        })
+    }
+}
+
+
 module.exports = {
-   addTeam, addMatch, showMatchesForResult, setResult, scorePredictions
+   addTeam, addMatch, showMatchesForResult, setResult, scorePredictions, sendTournamentData, getMatchesToGiveResult
 }

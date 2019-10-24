@@ -10,16 +10,16 @@ INSERT INTO predictions
         predictedAwayGoals = 0;
         
 DELETE FROM users
-    WHERE userName = "";
+    WHERE userName = "jan";
     
 DELETE FROM predictions
-	WHERE fixtureID = 61;
+	WHERE userID = 41;
 
 DELETE FROM fixtures
-	WHERE fixtureID = 61;
+	WHERE round = 103;
 
 DELETE FROM teams
-	WHERE teamName = "Harry";
+	WHERE teamName = "psst je hebt dit nog";
 
 SELECT * FROM fixtures;    
 SELECT * FROM users;
@@ -27,7 +27,7 @@ SELECT * FROM predictions;
 SELECT * FROM teams;
 
 SELECT * FROM fixtures WHERE homeGoals IS NULL AND fixtureID NOT IN (SELECT fixtureID FROM predictions) 
-AND '12' NOT IN (SELECT userID FROM predictions);
+	AND '12' NOT IN (SELECT userID FROM predictions);
    
 SELECT * FROM fixtures 
 	WHERE fixtureID NOT IN (SELECT fixtureID FROM predictions WHERE userID = '12')
@@ -36,8 +36,7 @@ SELECT * FROM fixtures
 
 SELECT * FROM predictions
 	INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID 
-    INNER JOIN users on users.userID = predictions.userID
-    WHERE fixtures.homeGoals IS NOT NULL;
+    INNER JOIN users on users.userID = predictions.userID;
 
 SELECT * FROM users
 	ORDER BY score DESC;
@@ -45,6 +44,9 @@ SELECT * FROM users
 DELETE FROM users 
 	WHERE userID = 32;
 
+DELETE FROM predictions
+	WHERE fixtureID = 69;
+
 UPDATE users
-	SET userPassword = "admin"
+	SET score = 14
 	WHERE userID = 4;

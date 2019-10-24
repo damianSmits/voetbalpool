@@ -7,6 +7,12 @@ CREATE TABLE teams (
     PRIMARY KEY (teamName)
     );
 
+ALTER TABLE teams
+	ADD COLUMN isNational boolean NOT NULL DEFAULT FALSE ;
+    
+SELECT * FROM teams;
+
+
 CREATE TABLE fixtures (
     fixtureID INT AUTO_INCREMENT,
     homeTeam varchar(50) NOT NULL,
@@ -39,7 +45,6 @@ CREATE TABLE users (
 
 CREATE TABLE tournaments (
 	tournamentID int AUTO_INCREMENT,
-    doubleRoundRobin boolean NOT NULL,
     amountOfTeams int NOT NULL,
     teamsPerPoule int NOT NULL,
     PRIMARY KEY(tournamentID)
