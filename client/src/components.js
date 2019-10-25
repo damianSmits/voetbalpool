@@ -273,12 +273,14 @@ const app = new Vue({
             matchesToPredict = await response.json();
             this.matchesToPredict = matchesToPredict;
         },
-        async sendMatchPrediction(homeGoals, homeTeam, awayTeam, awayGoals){
+        async sendMatchPrediction(homeGoals, homeTeam, awayTeam, awayGoals, round){
+            console.log(round)
             let newPrediction = {
                 "homeGoals": homeGoals,
                 "homeTeam": homeTeam,
                 "awayGoals": awayGoals,
                 "awayTeam": awayTeam,
+                "round":round,
                 "userName": localStorage["username"]
             }
             await fetch('api/sendMatchPrediction/', {

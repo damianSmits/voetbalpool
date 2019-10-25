@@ -1,8 +1,9 @@
  async function sendPrediction(connection, request){
+     console.log(request.body)
  
  let sql = "INSERT INTO predictions SET userID = (SELECT userID FROM users WHERE userName = '" 
     + request.body["userName"] + "'), fixtureID = (SELECT fixtureID FROM fixtures WHERE homeTeam = '" 
-    + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "'), predictedHomeGoals = '"
+    + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] + "' AND round = '" + request.body["round"] + "'), predictedHomeGoals = '"
     + request.body["homeGoals"] + "', predictedAwayGoals = '" + request.body["awayGoals"] + "';";
 
     connection.query(sql, async function (err, result) {
@@ -32,7 +33,7 @@ async function getMyPredictions(connection, request){
 async function getMatchesToPredict(connection, request){
     let sql = "SELECT * FROM fixtures " +
 	    "WHERE fixtureID NOT IN (SELECT fixtureID FROM predictions WHERE userID = (SELECT userID FROM users WHERE userName = '" + request.body["userName"] + "')) " +
-        "AND homeGoals IS NULL;";
+        "AND homeGoals IS NULL AND round >0;";
     
     let result = await connection.query(sql)
     let matchesToPredict = [];

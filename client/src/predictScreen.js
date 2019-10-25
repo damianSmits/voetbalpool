@@ -24,7 +24,8 @@ export default {
                     </span></br>
                     <label v-if="matchesToPredict.length==0">Geen resultaten gevonden.</label>
             <label v-for="(match, index) in matchesToPredict">
-                    {{ match["round"] }}: <span class = "homeTeam">{{ match["homeTeam"] }}</span> 
+                    <span>{{ match["round"] }}</span> 
+                    <span class = "homeTeam">{{ match["homeTeam"] }}</span> 
                     <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> -
                     <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> 
                     <span class = "homeTeam">{{ match["awayTeam"] }}</span>&nbsp;&nbsp;
@@ -38,12 +39,13 @@ export default {
             if(localStorage.length == 0){
                 this.errorMessage = "bennie ingelogd"
             } else{
-                if(event.target.parentNode.children[1].value){
+                if(event.target.parentNode.children[2].value){
                     this.goedzo ="Ingevuld!"
                 }
-                console.log(event.target.parentNode.children[1].value)
-                this.$emit("send-prediction", event.target.parentNode.children[1].value, event.target.parentNode.children[0].innerHTML, 
-                event.target.parentNode.children[3].innerHTML, event.target.parentNode.children[2].value, localStorage["username"])
+                console.log(event.target.parentNode.children[2].value)
+                this.$emit("send-prediction", event.target.parentNode.children[2].value, event.target.parentNode.children[1].innerHTML, 
+                event.target.parentNode.children[4].innerHTML, event.target.parentNode.children[3].value, 
+                event.target.parentNode.children[0].innerHTML, localStorage["username"])
                 event.target.disabled= true;
             }
         }    

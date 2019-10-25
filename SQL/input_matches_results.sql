@@ -17,7 +17,7 @@ INSERT INTO fixtures (homeTeam, awayTeam, round) VALUES(
 );
 
 DELETE FROM fixtures
-WHERE fixtureID > 66;
+	WHERE tournamentID = 47;
 
 SELECT * FROM fixtures;
 
@@ -31,4 +31,6 @@ UPDATE fixtures
 
 ALTER TABLE fixtures 
 	ADD COLUMN datum DATE NOT NULL DEFAULT 20190101;
-    
+
+ALTER TABLE fixtures 
+	ADD COLUMN poule varchar(1);

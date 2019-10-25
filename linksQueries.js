@@ -71,7 +71,7 @@ async function getEveryTeam(connection){
 
 async function getEveryRound(connection){
 
-    let sql = "SELECT DISTINCT(round) AS round FROM fixtures ORDER BY round ASC;";
+    let sql = "SELECT DISTINCT(round) AS round FROM fixtures WHERE round != -1 ORDER BY round ASC;";
 
     let result = await connection.query(sql)
         let rounds = [];

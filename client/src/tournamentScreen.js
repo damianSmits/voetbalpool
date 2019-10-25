@@ -44,7 +44,7 @@ export default {
         <div v-if=showGroups><button class="regularButton" v-on:click="sendTournamentData">Stort</button>
         
             <label class="groups" v-for="index in amountOfGroups" :key="index">
-            </br>Groep:{{index}}</br></br>
+            </br>Groep {{index}}</br></br>
                 <label v-for="index in amountOfTeamsInGroup" :key="index">
                 <select style="width: 180px">
                 <option v-for="team in teams">{{ team["teamName"] }}</option></br>
@@ -83,6 +83,8 @@ export default {
             if((new Set(this.teamsForTournament)).size !== this.teamsForTournament.length){
                 alert("Je hebt vaker hetzelfde team in je toernooi!")
             } else {
+                this.errorMessage = "Toegevoegd!"
+                event.target.disabled= true;
                 this.$emit('send-tournament-data', this.tournamentNamer, this.teamsForTournament, this.amountOfTeamsInGroup, this.amountOfTeams);
             }
         },

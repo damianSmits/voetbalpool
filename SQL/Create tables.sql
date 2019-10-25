@@ -7,9 +7,13 @@ CREATE TABLE teams (
     PRIMARY KEY (teamName)
     );
 
-ALTER TABLE teams
-	ADD COLUMN isNational boolean NOT NULL DEFAULT FALSE ;
+ALTER TABLE fixtures
+    ADD tournamentID INTEGER;
     
+ALTER TABLE fixtures
+ADD CONSTRAINT fk FOREIGN KEY (tournamentID) REFERENCES tournaments(TournamentID);
+    
+Select * from fixtures;
 SELECT * FROM teams;
 
 

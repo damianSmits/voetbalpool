@@ -1,3 +1,5 @@
+const schemaMakert = require('./schemaMakert')
+
 async function addTeam(connection, request){
 let sql = "INSERT IGNORE INTO teams SET teamName = '" + request.body["teamName"] + "';";
     connection.query(sql, function (err, result) {
@@ -85,6 +87,27 @@ async function sendTournamentData(connection, request){
         connection.query(sqlapp, async function (err, result) {
         })
     }
+    for (let i = 0; i<request.body["amountOfTeamsInGroup"];i++){
+        let result = [];
+        let teamsForGroup = [];
+        let sqlGet = "SELECT teamName FROM tournamentTeams WHERE tournamentID = (SELECT tournamentID FROM tournaments WHERE tournamentName = '" + request.body["tournamentNamer"] + "') AND poule = '" + (i + 1) + "';";
+        result = await connection.query(sqlGet);
+        for(let j = 0; j<request.body["amountOfTeamsInGroup"]; j++){
+            teamsForGroup.push(result[0][j]["teamName"])
+        }
+        console.log("Jeuu")
+        let groupMatches = schemaMakert.makeFixtures(teamsForGroup);
+        //console.log(groupMatches)
+        for (let k = 0; k<groupMatches.length; k+=2){
+            console.log(groupMatches[k] + " vs. " + groupMatches[k+1])
+            let sqlInsertFixtures = "INSERT INTO fixtures SET homeTeam = '" + groupMatches[k] + "', awayTeam = '" + groupMatches[k + 1] + "', "
+                                   +"tournamentID =  (SELECT tournamentID FROM tournaments WHERE tournamentName = '" + request.body["tournamentNamer"] + "'), "
+                                   +" poule = '" + (1 + i) + "', round = '" + -1 + "';";
+             connection.query(sqlInsertFixtures, async function (err, result) {
+             if (err) throw err;
+             }) 
+         }
+    }  
 }
 
 
