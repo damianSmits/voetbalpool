@@ -9,17 +9,12 @@ function makeFixtures(teamsFromGroup){
             teamsFromGroup[3], teamsFromGroup[0],
             teamsFromGroup[2], teamsFromGroup[1],
         )
+    }else {
+        matches = [];
+        console.log("Nog geen functionaliteit");
     }
     return matches;
 }
-
-
-
-
-
-
-
-
 
 module.exports = {
     makeFixtures

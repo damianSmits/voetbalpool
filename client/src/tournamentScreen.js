@@ -28,6 +28,7 @@ export default {
         Hoeveel teams totaal:
         <label id="teamAmount">
             <select style="width: 45px">
+                <option>32</option>
                 <option>16</option>
             </select></br></br></br>
         </label>
@@ -36,6 +37,7 @@ export default {
         <label id="groupTeamAmount">
             <select style="width: 45px">
                 <option>4</option>
+                <option>8</option>
             </select></br></br>
             <button class="regularButton" v-on:click="fillInGroups">Vul poules in</button>
             {{ errorMessage }}

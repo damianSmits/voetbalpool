@@ -70,7 +70,9 @@
                 v-bind:matches-to-predict="matchesToPredict"
                 v-on:send-prediction="sendMatchPrediction"
                 v-on:show-tournament-matches-to-predict="showTournamentMatchesToPredict"
-                v-on:show-league-matches-to-predict="showMatchesToPredict">
+                v-on:send-tournament-match-prediction="sendTourmentMatchPrediction"
+                v-on:show-league-matches-to-predict="showMatchesToPredict"
+                v-on:go-to-ko="goToKo">
             </predict-screen>
 
             <my-predictions-screen class = "split right"

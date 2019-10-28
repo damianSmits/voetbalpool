@@ -7,7 +7,7 @@ export default {
     },
     
     template: `
-        <div>
+        <div class = "split right" style="overflow-y : auto">
             </br></br>
             <span class="myPredictionsHeader">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
             &nbsp&nbsp&nbsp&nbsp&nbspThuis team

@@ -1,5 +1,5 @@
-ALTER TABLE users 
-ADD email varchar(50) UNIQUE NOT NULL;
+ALTER TABLE predictions
+ADD poule varchar(50);
 
 INSERT INTO users 
 SET userName = "admin",

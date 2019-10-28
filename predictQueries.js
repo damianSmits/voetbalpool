@@ -11,6 +11,16 @@
     }) 
  }
 
+async function sendTournamentMatchPrediction(connection, request){
+    console.log(request.body)
+
+let sql = "INSERT INTO predictions SET userID = (SELECT userID FROM users WHERE userName = '" 
+   + request.body["userName"] + "'), fixtureID = (SELECT fixtureID FROM fixtures WHERE homeTeam = '" 
+   + request.body["homeTeam"] + "' AND awayTeam = '" + request.body["awayTeam"] +"' AND round < 0), predictedHomeGoals = '" +  request.body["homeGoals"] + "', predictedAwayGoals = '" + request.body["awayGoals"] + "', poule = '" + request.body["poule"] + "';";
+   connection.query(sql, async function (err, result) {
+       if (err) throw err;
+   }) 
+}
 
 async function getMyPredictions(connection, request){
     let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID WHERE checked = FALSE AND userID = (SELECT userID from users WHERE userName = '" + request.body["userName"] + "');";
@@ -69,7 +79,28 @@ async function getTournamentMatchesToPredict(connection, request){
     return matchesToPredict;     
 }
 
+async function getKo(connection, request){
+    let sql = "SELECT * FROM predictions "+
+            "INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID "+
+            "INNER JOIN users on users.userID = predictions.userID " +
+            "WHERE predictions.userID = (SELECT userID from users WHERE userName = '" + request.body["userName"] + "') AND predictions.poule IS NOT NULL;"
+            console.log(sql)
+    let result = await connection.query(sql)
+    let predictedGroupMatches = [];
+    for (let i = 0; i<result[0].length; i++){
+        //console.log(result[0][i])
+    
+    predictedGroupMatches.push(
+        {
+            homeTeam: result[0][i]["homeTeam"],
+            predictedHomeGoals: result[0][i]["predictedHomeGoals"],
+            predictedawayGoals: result[0][i]["predictedAwayGoals"],
+            awayTeam: result[0][i]["awayTeam"],
+            poule: result[0][i]["poule"],
+        })
+    }console.log(predictedGroupMatches)
+}
 
 module.exports = {
-    sendPrediction, getMyPredictions, getMatchesToPredict, getTournamentMatchesToPredict
+    sendPrediction, getMyPredictions, getMatchesToPredict, getTournamentMatchesToPredict, sendTournamentMatchPrediction, getKo
  }

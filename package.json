@@ -4,22 +4,21 @@
   "description": "Het project voor eigen opdracht",
   "main": "main.js",
   "scripts": {
-    "test": "ava test.js --verbose",
+    "test": "nyc ava",
     "test:watch": "ava test.js --verbose --watch",
     "ava": "ava --verbose"
   },
   "dependencies": {
     "express": "^4.16.4",
     "mysql2": "^1.7.0"
-    
   },
   "devDependencies": {
-    "ava": "^2.4.0"
+    "ava": "^2.4.0",
+    "nyc": "^14.1.1"
   },
   "ava": {
-		"files": [
+    "files": [
       "**/*test.js"
     ]
   }
 }
-  

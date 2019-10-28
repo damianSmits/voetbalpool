@@ -11,6 +11,7 @@ export default {
                 goedzo: "",
                 isTournament: false,
                 loginName: localStorage["username"],
+                toKO: matchesToPredict.length ==0,
         }
     },
     
@@ -56,8 +57,9 @@ export default {
                     <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> -
                     <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> 
                     <span class = "homeTeam">{{ match["awayTeam"] }}</span>&nbsp;&nbsp;
-                    <button class = "regularButton" v-on:click="sendPrediction">voorspel!</button></br> 
+                    <button class = "regularButton" v-on:click="sendTournamentMatchPrediction">voorspel!</button></br> 
                 </label>
+                <button class = "regularButton" v-on:click="goToKo">Naar KO-fase</button>
             </div>
         </div>
             
@@ -77,6 +79,19 @@ export default {
                 event.target.disabled= true;
             }
         },
+        sendTournamentMatchPrediction(){
+            if(localStorage.length == 0){
+                this.errorMessage = "bennie ingelogd"
+            } else{
+                if(event.target.parentNode.children[2].value){
+                    this.goedzo ="Ingevuld!"
+                }
+                this.$emit("send-tournament-match-prediction", event.target.parentNode.children[2].value, event.target.parentNode.children[1].innerHTML, 
+                event.target.parentNode.children[4].innerHTML, event.target.parentNode.children[3].value, 
+                event.target.parentNode.children[0].innerHTML, localStorage["username"])
+                event.target.disabled= true;
+            }
+        },
         showTournament(){
             if(!this.isTournament){
                 this.$emit('show-tournament-matches-to-predict', this.loginName); 
@@ -87,5 +102,8 @@ export default {
             this.isTournament = !this.isTournament 
             return this.isTournament
         },
+        goToKo(){
+            this.$emit('go-to-ko', localStorage["username"])
+        }
     }
 }

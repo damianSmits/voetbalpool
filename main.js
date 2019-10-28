@@ -94,9 +94,23 @@ app.post("/api/getTournamentMatchesToPredict/", async function (request, respons
 });   
 
 app.post("/api/sendMatchPrediction", async function (request, response) {
-    console.log("Api call received for /userLogin");
+    console.log("Api call received for /sendMatchPrediction");
     await makeNewConnection()
     predictQueries.sendPrediction(connection, request);
+    await connection.end();
+})
+
+app.post("/api/sendTournamentMatchPrediction", async function (request, response) {
+    console.log("Api call received for /sentTournamentMatchPrediction");
+    await makeNewConnection()
+    predictQueries.sendTournamentMatchPrediction(connection, request);
+    await connection.end();
+})
+
+app.post("/api/goToKo", async function (request, response) {
+    console.log("Api call received for /goToKo");
+    await makeNewConnection()
+    response.json(predictQueries.getKo(connection, request));
     await connection.end();
 })
 

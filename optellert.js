@@ -1,12 +1,10 @@
 async function getScore(homeGoals, awayGoals, predictedHomeGoals, predictedAwayGoals){
-    console.log("3.1")
     let winnerCorrect = (await determineWinner(homeGoals, awayGoals) === await determineWinner(predictedHomeGoals, predictedAwayGoals));
     let score = await determinePredictionScore(homeGoals, awayGoals, predictedHomeGoals, predictedAwayGoals, winnerCorrect);
     return score;
 }
 
 async function determineWinner(homeGoals, awayGoals){
-    console.log("3.2")
     let result = 0;
     if(homeGoals > awayGoals){ 
         result = 1; 
@@ -19,7 +17,6 @@ async function determineWinner(homeGoals, awayGoals){
 }
 
 async function determinePredictionScore(homeGoals, awayGoals, predictedHomeGoals, predictedAwayGoals, winnerCorrect){
-    console.log("3.3")
     let score = 0;
     if (winnerCorrect === false && awayGoals !== predictedAwayGoals && homeGoals !== predictedHomeGoals) {
         score = 0;
@@ -29,7 +26,7 @@ async function determinePredictionScore(homeGoals, awayGoals, predictedHomeGoals
         score = 3
     } else if (winnerCorrect === true && (awayGoals === predictedAwayGoals ^ homeGoals === predictedHomeGoals)){
         score = 4
-    } else if (winnerCorrect === true && awayGoals === predictedAwayGoals && homeGoals === predictedHomeGoals){
+    } else {
         score = 5
     } 
     return score;

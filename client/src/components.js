@@ -314,6 +314,38 @@ const app = new Vue({
                 body: JSON.stringify(newPrediction)
             })
         },
+        async sendTourmentMatchPrediction(homeGoals, homeTeam, awayTeam, awayGoals, poule){
+            let newPrediction = {
+                "homeGoals": homeGoals,
+                "homeTeam": homeTeam,
+                "awayGoals": awayGoals,
+                "awayTeam": awayTeam,
+                "poule":poule,
+                "userName": localStorage["username"]
+            }
+            await fetch('api/sendTournamentMatchPrediction/', {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newPrediction)
+            })
+        },
+        async goToKo(userName){
+            let newUserToGetKO= {
+                "userName": userName,
+            }
+            let response = await fetch('api/goToKo/', {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newUserToGetKO)
+            })
+            console.log(response)
+        },
         async getMyPredictions(userName){
             let newMyPredictions = {"userName": userName};
             let response = await fetch('api/getMyPredictions/', {
