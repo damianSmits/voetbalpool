@@ -48,6 +48,13 @@ Vue.component('predict-screen', (resolve) => {
     });   
 });
 
+Vue.component('predict-tournament-screen', (resolve) => {
+    import('./predictTournamentScreen.js')
+    .then((predictTournamentScreen) => {
+      resolve(predictTournamentScreen.default);
+    });   
+});
+
 Vue.component('my-predictions-screen', (resolve) => {
     import('./myPredictionsScreen.js')
     .then((myPredictionsScreen) => {
@@ -263,6 +270,21 @@ const app = new Vue({
                 "userName": userName,
             }
             let response = await fetch('api/getMatchesToPredict/', {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newUserToGetPredictions)
+            })
+            matchesToPredict = await response.json();
+            this.matchesToPredict = matchesToPredict;
+        },
+        async showTournamentMatchesToPredict(userName){
+            let newUserToGetPredictions= {
+                "userName": userName,
+            }
+            let response = await fetch('api/getTournamentMatchesToPredict/', {
                 method: 'POST',
                 headers: {
                 'Accept': 'application/json',

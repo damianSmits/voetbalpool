@@ -1,4 +1,5 @@
 const schemaMakert = require('./schemaMakert')
+const optellert = require('./optellert')
 
 async function addTeam(connection, request){
 let sql = "INSERT IGNORE INTO teams SET teamName = '" + request.body["teamName"] + "';";
@@ -57,17 +58,17 @@ async function getMatchesToGiveResult(connection, request){
 async function scorePredictions(connection, request){
 
 let sql = "SELECT * FROM predictions INNER JOIN fixtures on fixtures.fixtureID = predictions.fixtureID INNER JOIN users on users.userID = predictions.userID WHERE checked = false AND fixtures.homeGoals IS NOT NULL";
-
-    connection.query(sql, async function (err, result) {
+    console.log("2")
+    await connection.query(sql, async function (err, result) {
         
         for (let i=0; i<result.length; i++){
-            
-            let sqlUpdate = "update users SET score = score + '"+ optellert.getScore(result[i]["homeGoals"], result[i]["awayGoals"], result[i]["predictedHomeGoals"], result[i]["predictedAwayGoals"], result[i]["userID"]) +"' WHERE userID = '" + result[i]["userID"] +"';";
+            console.log("3")
+            let sqlUpdate = "update users SET score = score + '"+ await optellert.getScore(result[i]["homeGoals"], result[i]["awayGoals"], result[i]["predictedHomeGoals"], result[i]["predictedAwayGoals"]) +"' WHERE userID = '" + result[i]["userID"] +"';";
 
             connection.query(sqlUpdate, async function (err, result) {
             if (err) throw err;
             }) 
-
+            console.log("3.4")
             let sqlCheck = "UPDATE predictions SET checked = TRUE WHERE fixtureID = '" + result[i]["fixtureID"] + "' AND userID = '" + result[i]["userID"] + "';";
             connection.query(sqlCheck, async function (err, result) {
             if (err) throw err;
@@ -97,7 +98,6 @@ async function sendTournamentData(connection, request){
         }
         console.log("Jeuu")
         let groupMatches = schemaMakert.makeFixtures(teamsForGroup);
-        //console.log(groupMatches)
         for (let k = 0; k<groupMatches.length; k+=2){
             console.log(groupMatches[k] + " vs. " + groupMatches[k+1])
             let sqlInsertFixtures = "INSERT INTO fixtures SET homeTeam = '" + groupMatches[k] + "', awayTeam = '" + groupMatches[k + 1] + "', "

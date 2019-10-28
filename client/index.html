@@ -68,7 +68,9 @@
                 v-if=predictMatches
                 v-on:predict-matches="showMatchesToPredict"
                 v-bind:matches-to-predict="matchesToPredict"
-                v-on:send-prediction="sendMatchPrediction">
+                v-on:send-prediction="sendMatchPrediction"
+                v-on:show-tournament-matches-to-predict="showTournamentMatchesToPredict"
+                v-on:show-league-matches-to-predict="showMatchesToPredict">
             </predict-screen>
 
             <my-predictions-screen class = "split right"

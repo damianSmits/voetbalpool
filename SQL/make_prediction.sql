@@ -9,9 +9,6 @@ INSERT INTO predictions
         predictedHomeGoals = 3,
         predictedAwayGoals = 0;
         
-DELETE FROM users
-    WHERE userName = "jan";
-    
 DELETE FROM predictions
 	WHERE userID = 41;
 
@@ -45,8 +42,8 @@ DELETE FROM users
 	WHERE userID = 32;
 
 DELETE FROM predictions
-	WHERE fixtureID = 69;
+	WHERE userID = 40;
 
-UPDATE users
-	SET score = 14
-	WHERE userID = 4;
+UPDATE predictions
+	SET checked = FALSE
+	WHERE fixtureID > 44;

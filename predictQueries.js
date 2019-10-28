@@ -49,6 +49,27 @@ async function getMatchesToPredict(connection, request){
     return matchesToPredict;     
 }
 
- module.exports = {
-    sendPrediction, getMyPredictions, getMatchesToPredict
+
+async function getTournamentMatchesToPredict(connection, request){
+    let sql = "SELECT * FROM fixtures " +
+	    "WHERE fixtureID NOT IN (SELECT fixtureID FROM predictions WHERE userID = (SELECT userID FROM users WHERE userName = '" + request.body["userName"] + "')) " +
+        "AND homeGoals IS NULL AND tournamentID IS NOT NULL;";
+    
+    let result = await connection.query(sql)
+    let matchesToPredict = [];
+        
+    for (let i = 0; i < result[0].length; i++) {
+        matchesToPredict.push(
+            {
+                homeTeam: result[0][i]["homeTeam"],
+                awayTeam: result[0][i]["awayTeam"],
+                poule: result[0][i]["poule"],
+            })
+        }
+    return matchesToPredict;     
+}
+
+
+module.exports = {
+    sendPrediction, getMyPredictions, getMatchesToPredict, getTournamentMatchesToPredict
  }

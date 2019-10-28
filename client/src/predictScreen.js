@@ -9,21 +9,27 @@ export default {
                 ronde:false,
                 errorMessage:"",
                 goedzo: "",
+                isTournament: false,
+                loginName: localStorage["username"],
         }
     },
     
     template: `
-        <div>
-            </br></br>{{ errorMessage }}{{ goedzo }}</br></br>
-            <span class = "predictionHeader">R: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            Thuis team 
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Uit Team
+    <div style="overflow-y : auto" class="split right">
+        <button class = "regularButton" v-on:click="showTournament" v-if=!isTournament>naar Toernooi</button>
+        <button class = "regularButton" v-on:click="showTournament" v-if=isTournament>naar Competitie</button>
+            <div v-if=!isTournament>
+
+            </br>{{ errorMessage }}{{ goedzo }}</br>
+                <span class = "predictionHeader">R: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                Thuis team 
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Uit Team
                     </span></br>
                     <label v-if="matchesToPredict.length==0">Geen resultaten gevonden.</label>
-            <label v-for="(match, index) in matchesToPredict">
+                <label v-for="(match, index) in matchesToPredict">
                     <span>{{ match["round"] }}</span> 
                     <span class = "homeTeam">{{ match["homeTeam"] }}</span> 
                     <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> -
@@ -31,10 +37,32 @@ export default {
                     <span class = "homeTeam">{{ match["awayTeam"] }}</span>&nbsp;&nbsp;
                     <button class = "regularButton" v-on:click="sendPrediction">voorspel!</button></br> 
                 </label>
+            </div>
+            
+            <div v-if=isTournament>
+
+            </br>{{ errorMessage }}{{ goedzo }}</br>
+                <span class = "predictionHeader">P: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                Thuis team 
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Uit Team
+                    </span></br>
+                    <label v-if="matchesToPredict.length==0">Geen resultaten gevonden.</label>
+                <label v-for="(match, index) in matchesToPredict">
+                    <span>{{ match["poule"] }}</span> 
+                    <span class = "homeTeam">{{ match["homeTeam"] }}</span> 
+                    <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> -
+                    <input type = "number" min = 0 step =1 style="width: 3em" oninput="this.value = Math.abs(this.value)"> 
+                    <span class = "homeTeam">{{ match["awayTeam"] }}</span>&nbsp;&nbsp;
+                    <button class = "regularButton" v-on:click="sendPrediction">voorspel!</button></br> 
+                </label>
+            </div>
         </div>
             
     `,
-    methods: { 
+    methods: {
         sendPrediction(){
             if(localStorage.length == 0){
                 this.errorMessage = "bennie ingelogd"
@@ -48,6 +76,16 @@ export default {
                 event.target.parentNode.children[0].innerHTML, localStorage["username"])
                 event.target.disabled= true;
             }
-        }    
+        },
+        showTournament(){
+            if(!this.isTournament){
+                this.$emit('show-tournament-matches-to-predict', this.loginName); 
+            }
+            if(this.isTournament === true){
+                this.$emit('show-league-matches-to-predict', this.loginName); 
+            }
+            this.isTournament = !this.isTournament 
+            return this.isTournament
+        },
     }
 }
